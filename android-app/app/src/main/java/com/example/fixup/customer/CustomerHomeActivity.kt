@@ -279,11 +279,12 @@ class CustomerHomeActivity : AppCompatActivity() {
     private fun openTracking(req: ServiceRequest) {
         fun launch(lat: Double, lon: Double) {
             startActivity(Intent(this, TrackingActivity::class.java).apply {
-                putExtra("requestId",         req.id)
-                putExtra("vendorId",          req.acceptedVendorId)
-                putExtra("vendorName",        req.acceptedVendorName.ifEmpty { "Vendor" })
-                putExtra("customerLatitude",  lat)
-                putExtra("customerLongitude", lon)
+                putExtra("requestId",          req.id)
+                putExtra("vendorId",           req.acceptedVendorId)
+                putExtra("vendorName",         req.acceptedVendorName.ifEmpty { "Vendor" })
+                putExtra("acceptedBidAmount",  req.acceptedBidAmount)
+                putExtra("customerLatitude",   lat)
+                putExtra("customerLongitude",  lon)
             })
         }
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -352,16 +353,37 @@ class CustomerHomeActivity : AppCompatActivity() {
                     "completed" -> getString(R.string.status_completed)
                     else        -> req.status.replaceFirstChar(Char::uppercase)
                 }
-                val badgeColor = when (req.status) {
-                    "open"      -> Color.parseColor("#4CAF50")
-                    "assigned"  -> Color.parseColor("#FF9800")
-                    "completed" -> Color.parseColor("#9E9E9E")
-                    else        -> Color.parseColor("#4CAF50")
+                val (badgeBg, badgeFg) = when (req.status) {
+                    "open"      -> Color.parseColor("#FEF3C7") to Color.parseColor("#D97706")
+                    "assigned"  -> Color.parseColor("#DBEAFE") to Color.parseColor("#1D4ED8")
+                    "completed" -> Color.parseColor("#D1FAE5") to Color.parseColor("#065F46")
+                    else        -> Color.parseColor("#FEF3C7") to Color.parseColor("#D97706")
                 }
+                tvStatus.setTextColor(badgeFg)
                 tvStatus.background = GradientDrawable().apply {
                     shape        = GradientDrawable.RECTANGLE
+                    cornerRadius = 20f
+                    setColor(badgeBg)
+                }
+
+                // Category icon + background
+                val (iconEmoji, iconBg) = when {
+                    req.detectedCategory.contains("Mason", ignoreCase = true) ||
+                    req.detectedCategory.contains("Plaster", ignoreCase = true) ->
+                        "🧱" to Color.parseColor("#FEF3C7")
+                    req.detectedCategory.contains("Electric", ignoreCase = true) ->
+                        "⚡" to Color.parseColor("#FEF9C3")
+                    req.detectedCategory.contains("Paint", ignoreCase = true) ->
+                        "🎨" to Color.parseColor("#FAE8FF")
+                    req.detectedCategory.contains("Plumb", ignoreCase = true) ->
+                        "💧" to Color.parseColor("#E0F2FE")
+                    else -> "🔧" to Color.parseColor("#EEF2FF")
+                }
+                tvCategoryIcon.text = iconEmoji
+                flCategoryIcon.background = GradientDrawable().apply {
+                    shape        = GradientDrawable.RECTANGLE
                     cornerRadius = 12f
-                    setColor(badgeColor)
+                    setColor(iconBg)
                 }
 
                 tvDate.text = req.createdAt?.toDate()?.let {

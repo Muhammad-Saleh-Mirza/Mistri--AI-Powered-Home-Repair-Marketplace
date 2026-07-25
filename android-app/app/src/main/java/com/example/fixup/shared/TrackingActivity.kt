@@ -1,14 +1,17 @@
 package com.example.fixup.shared
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.animation.LinearInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.fixup.R
@@ -37,11 +40,13 @@ class TrackingActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private lateinit var requestId: String
+    private var vendorId    = ""
     private var vendorName  = "Vendor"
     private var customerLat = 0.0
     private var customerLon = 0.0
     private var vendorLat   = 0.0
     private var vendorLon   = 0.0
+    private var bidFetched  = false
 
     private var googleMap: GoogleMap? = null
     private var customerMarker: Marker? = null
@@ -57,15 +62,59 @@ class TrackingActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestId   = intent.getStringExtra("requestId")        ?: run { finish(); return }
+        vendorId    = intent.getStringExtra("vendorId")          ?: ""
         vendorName  = intent.getStringExtra("vendorName")        ?: "Vendor"
         customerLat = intent.getDoubleExtra("customerLatitude",  0.0)
         customerLon = intent.getDoubleExtra("customerLongitude", 0.0)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Tracking $vendorName"
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
+        // Vendor card
         binding.tvVendorNameTracking.text = vendorName
+        val initials = vendorName.split(" ").take(2)
+            .joinToString("") { it.firstOrNull()?.uppercase() ?: "" }
+        binding.tvVendorInitialsTracking.text = initials
+
+        // Accepted bid from intent
+        val bidAmount = intent.getIntExtra("acceptedBidAmount", 0)
+        if (bidAmount > 0) {
+            binding.tvAcceptedBid.text = "PKR ${String.format(java.util.Locale.US, "%,d", bidAmount)}"
+        }
+
+        // Animate EN ROUTE blinking dot
+        ObjectAnimator.ofFloat(binding.viewEnRouteDot, "alpha", 1f, 0.3f).apply {
+            duration = 800
+            repeatMode = ObjectAnimator.REVERSE
+            repeatCount = ObjectAnimator.INFINITE
+            start()
+        }
+
+        binding.btnBackFromTracking.setOnClickListener { finish() }
+        binding.fabRecenter.setOnClickListener {
+            if (vendorLat != 0.0 || vendorLon != 0.0) {
+                googleMap?.animateCamera(
+                    com.google.android.gms.maps.CameraUpdateFactory
+                        .newLatLngZoom(LatLng(vendorLat, vendorLon), 15f)
+                )
+            } else if (customerLat != 0.0 || customerLon != 0.0) {
+                googleMap?.animateCamera(
+                    com.google.android.gms.maps.CameraUpdateFactory
+                        .newLatLngZoom(LatLng(customerLat, customerLon), 14f)
+                )
+            }
+        }
+        binding.btnMessageVendor.setOnClickListener {
+            startActivity(Intent(this, ChatActivity::class.java).apply {
+                putExtra("requestId",  requestId)
+                putExtra("vendorId",   vendorId)
+                putExtra("vendorName", vendorName)
+            })
+        }
+        binding.btnCallVendor.setOnClickListener {
+            Toast.makeText(this, "Calling $vendorName…", Toast.LENGTH_SHORT).show()
+        }
 
         val mapFragment = SupportMapFragment.newInstance()
         supportFragmentManager.beginTransaction()
@@ -76,8 +125,6 @@ class TrackingActivity : AppCompatActivity() {
             setupInitialMap()
             startLocationListener()
         }
-
-        binding.btnBackFromTracking.setOnClickListener { finish() }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,6 +168,27 @@ class TrackingActivity : AppCompatActivity() {
     }
 
     private fun startLocationListener() {
+        // Fetch accepted bid for est. duration and vendor category (one-time)
+        if (!bidFetched && vendorId.isNotEmpty()) {
+            db.collection(Constants.COLLECTION_BIDS)
+                .whereEqualTo("requestId", requestId)
+                .whereEqualTo("vendorId", vendorId)
+                .whereEqualTo("status", "accepted")
+                .limit(1)
+                .get()
+                .addOnSuccessListener { snap ->
+                    bidFetched = true
+                    val bidDoc = snap.documents.firstOrNull() ?: return@addOnSuccessListener
+                    val hours = bidDoc.getDouble("estimatedHours") ?: 0.0
+                    if (hours > 0) {
+                        val label = if (hours % 1 == 0.0) "${hours.toInt()} hrs" else "$hours hrs"
+                        binding.tvEstDuration.text = label
+                    }
+                    val cat = bidDoc.getString("vendorCategory") ?: ""
+                    if (cat.isNotEmpty()) binding.tvVendorMetaTracking.text = cat
+                }
+        }
+
         locationListener = db.collection(Constants.COLLECTION_REQUESTS)
             .document(requestId)
             .addSnapshotListener { doc, _ ->
@@ -212,15 +280,13 @@ class TrackingActivity : AppCompatActivity() {
 
     private fun updateDistanceEta(vLat: Double, vLon: Double) {
         if (customerLat == 0.0 && customerLon == 0.0) {
-            binding.tvDistanceEta.text = "Vendor is on the way"
+            binding.tvDistanceEta.text = "On the way…"
             return
         }
         val results = FloatArray(1)
         Location.distanceBetween(customerLat, customerLon, vLat, vLon, results)
         val distKm  = results[0] / 1000.0
         val etaMins = ((distKm / 30.0) * 60).toInt().coerceAtLeast(1)
-        binding.tvDistanceEta.text = String.format(
-            Locale.US, "%.1f km away · approx %d min", distKm, etaMins
-        )
+        binding.tvDistanceEta.text = "Arrives in ~$etaMins min"
     }
 }

@@ -8,35 +8,59 @@
         <item name="colorOnSecondary">@color/white</item>
         <item name="colorError">@color/colorError</item>
         <item name="android:colorBackground">@color/colorBackground</item>
-        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/heroStart</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="materialButtonStyle">@style/Widget.FixUp.Button</item>
         <item name="textInputStyle">@style/Widget.FixUp.TextInputLayout</item>
+        <item name="materialCardViewStyle">@style/Widget.FixUp.CardView</item>
     </style>
 
+    <!-- Primary filled button — taller, softer corners, no shouting caps -->
     <style name="Widget.FixUp.Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:minHeight">52dp</item>
-        <item name="cornerRadius">8dp</item>
+        <item name="android:minHeight">54dp</item>
+        <item name="cornerRadius">14dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
         <item name="android:textAllCaps">false</item>
+        <item name="elevation">0dp</item>
+        <item name="rippleColor">#33FFFFFF</item>
     </style>
 
     <style name="Widget.FixUp.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:minHeight">48dp</item>
-        <item name="cornerRadius">8dp</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">54dp</item>
+        <item name="cornerRadius">14dp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
-        <item name="strokeColor">@color/colorAccent</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="strokeColor">@color/colorPrimary</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="rippleColor">#1A1A56DB</item>
     </style>
 
+    <!-- Filled, soft-cornered inputs -->
     <style name="Widget.FixUp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-        <item name="boxCornerRadiusTopStart">8dp</item>
-        <item name="boxCornerRadiusTopEnd">8dp</item>
-        <item name="boxCornerRadiusBottomStart">8dp</item>
-        <item name="boxCornerRadiusBottomEnd">8dp</item>
+        <item name="boxBackgroundColor">@color/colorInputBackground</item>
+        <item name="boxStrokeColor">@color/colorPrimary</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+        <item name="hintTextColor">@color/colorPrimary</item>
+        <item name="android:textColorHint">@color/textHint</item>
+        <item name="startIconTint">@color/textSecondary</item>
+        <item name="endIconTint">@color/textSecondary</item>
+    </style>
+
+    <style name="Widget.FixUp.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">18dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/colorSurface</item>
+        <item name="strokeColor">@color/cardStroke</item>
+        <item name="strokeWidth">1dp</item>
     </style>
 
     <style name="Theme.FixUp.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">

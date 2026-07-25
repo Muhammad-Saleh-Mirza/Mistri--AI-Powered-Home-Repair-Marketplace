@@ -1,26 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1565C0</color>
-    <color name="colorPrimaryDark">#0D47A1</color>
-    <color name="colorPrimaryLight">#1976D2</color>
-    <color name="colorAccent">#FF6D00</color>
-    <color name="colorError">#B00020</color>
-    <color name="colorBackground">#F8F9FA</color>
+    <!-- ============================================================
+         FixUp – refreshed palette (modern, professional)
+         Deep royal blue brand + refined amber + slate neutrals.
+         All original token NAMES preserved so no layout/Kotlin breaks.
+         ============================================================ -->
+
+    <!-- Brand blue -->
+    <color name="colorPrimary">#1A56DB</color>
+    <color name="colorPrimaryDark">#163FA8</color>
+    <color name="colorPrimaryLight">#3B7DF6</color>
+
+    <!-- Hero gradient stops -->
+    <color name="heroStart">#2E6BF0</color>
+    <color name="heroMid">#1A56DB</color>
+    <color name="heroEnd">#143C9E</color>
+
+    <!-- Soft brand surfaces (chips, icon backings) -->
+    <color name="colorPrimarySurface">#EAF1FE</color>
+
+    <!-- Accent -->
+    <color name="colorAccent">#F59E0B</color>
+
+    <!-- Feedback -->
+    <color name="colorError">#DC2626</color>
+    <color name="colorSuccess">#0E9F6E</color>
+
+    <!-- Surfaces / background -->
+    <color name="colorBackground">#F4F6FB</color>
     <color name="colorSurface">#FFFFFF</color>
     <color name="colorOnPrimary">#FFFFFF</color>
-    <color name="textPrimary">#212121</color>
-    <color name="textSecondary">#757575</color>
-    <color name="textHint">#9E9E9E</color>
-    <color name="divider">#E0E0E0</color>
+    <color name="colorInputBackground">#F4F6FB</color>
+
+    <!-- Text – slate ramp -->
+    <color name="textPrimary">#0F172A</color>
+    <color name="textSecondary">#64748B</color>
+    <color name="textHint">#94A3B8</color>
+
+    <!-- Lines -->
+    <color name="divider">#E5E9F2</color>
+    <color name="cardStroke">#E5E9F2</color>
+
+    <!-- Neutral aliases -->
     <color name="white">#FFFFFF</color>
-    <color name="black">#212121</color>
-    <color name="statusOpen">#FF6D00</color>
-    <color name="statusAssigned">#1565C0</color>
-    <color name="statusCompleted">#2E7D32</color>
-    <color name="vendorActive">#2E7D32</color>
-    <color name="vendorSuspended">#B00020</color>
-    <color name="bubbleSent">#1565C0</color>
-    <color name="bubbleReceived">#F0F0F0</color>
-    <color name="cardStroke">#E0E0E0</color>
-    <color name="colorInputBackground">#F8F9FA</color>
+    <color name="black">#0F172A</color>
+
+    <!-- Status -->
+    <color name="statusOpen">#F59E0B</color>
+    <color name="statusAssigned">#1A56DB</color>
+    <color name="statusCompleted">#0E9F6E</color>
+    <color name="vendorActive">#0E9F6E</color>
+    <color name="vendorSuspended">#DC2626</color>
+
+    <!-- Chat bubbles -->
+    <color name="bubbleSent">#1A56DB</color>
+    <color name="bubbleReceived">#EFF2F8</color>
+
+    <!-- Translucent white for controls on the hero -->
+    <color name="onHeroStroke">#66FFFFFF</color>
+    <color name="onHeroFill">#1FFFFFFF</color>
 </resources>

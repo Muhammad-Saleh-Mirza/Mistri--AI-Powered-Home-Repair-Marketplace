@@ -2,6 +2,9 @@ package com.example.fixup.customer
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.media.RingtoneManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -50,7 +53,8 @@ class BidsActivity : AppCompatActivity() {
         val estimatedHours: Double,
         val note: String,
         val status: String,
-        val vendorProfilePicUrl: String = ""
+        val vendorProfilePicUrl: String = "",
+        val vendorCategory: String = ""
     )
 
     override fun attachBaseContext(newBase: Context) {
@@ -67,11 +71,19 @@ class BidsActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = requestTitle
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        binding.tvHeroTitle.text = requestTitle
 
         adapter = BidsAdapter()
         binding.recyclerBids.layoutManager = LinearLayoutManager(this)
         binding.recyclerBids.adapter = adapter
+
+        binding.btnRefresh.setOnClickListener {
+            bidsListener?.remove()
+            binding.progressBar.visibility = View.VISIBLE
+            binding.layoutBidsEmpty.visibility = View.GONE
+            startBidsListener()
+        }
     }
 
     override fun onStart() {
@@ -88,11 +100,9 @@ class BidsActivity : AppCompatActivity() {
                 val min  = doc.getLong("estimatedPriceMin")?.toInt() ?: 0
                 val max  = doc.getLong("estimatedPriceMax")?.toInt() ?: 0
                 val rec  = doc.getLong("estimatedPriceRecommended")?.toInt() ?: 0
-                val reason = doc.getString("priceJustification") ?: ""
 
                 binding.tvPriceRange.text       = "💰 PKR ${String.format(Locale.US, fmt, min)} – ${String.format(Locale.US, fmt, max)}"
-                binding.tvPriceRecommended.text = "Recommended: PKR ${String.format(Locale.US, fmt, rec)}"
-                binding.tvPriceReason.text      = "\"$reason\""
+                binding.tvPriceRecommended.text = "PKR ${String.format(Locale.US, fmt, rec)}"
                 binding.cardPrice.visibility    = View.VISIBLE
 
                 startBidsListener()
@@ -140,7 +150,8 @@ class BidsActivity : AppCompatActivity() {
                             estimatedHours      = doc.getDouble("estimatedHours") ?: 1.0,
                             note                = doc.getString("note") ?: "",
                             status              = doc.getString("status") ?: "pending",
-                            vendorProfilePicUrl = doc.getString("vendorProfilePicUrl") ?: ""
+                            vendorProfilePicUrl = doc.getString("vendorProfilePicUrl") ?: "",
+                            vendorCategory      = doc.getString("vendorCategory") ?: ""
                         )
                     )
                 }
@@ -162,6 +173,7 @@ class BidsActivity : AppCompatActivity() {
 
                 adapter.notifyDataSetChanged()
                 binding.layoutBidsEmpty.visibility = if (bids.isEmpty()) View.VISIBLE else View.GONE
+                binding.tvBidCount.text = "${bids.size} Bids Received"
             }
     }
 
@@ -255,21 +267,46 @@ class BidsActivity : AppCompatActivity() {
                 )
             }
             with(holder.b) {
+                // Vendor initials + avatar
+                val initials = bid.vendorName.split(" ")
+                    .take(2).joinToString("") { it.firstOrNull()?.uppercase() ?: "" }
+                tvVendorInitials.text = initials
+                val avatarColors = listOf("#1A56DB", "#059669", "#7C3AED", "#D97706", "#DC2626")
+                flVendorAvatar.background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(Color.parseColor(avatarColors[position % avatarColors.size]))
+                }
                 if (bid.vendorProfilePicUrl.isNotEmpty()) {
                     ivVendorAvatar.visibility = View.VISIBLE
+                    tvVendorInitials.visibility = View.GONE
                     Glide.with(this@BidsActivity)
                         .load(bid.vendorProfilePicUrl)
                         .circleCrop()
                         .into(ivVendorAvatar)
                 } else {
                     ivVendorAvatar.visibility = View.GONE
+                    tvVendorInitials.visibility = View.VISIBLE
                 }
-                tvVendorName.text = bid.vendorName
-                tvRating.text     = "⭐ ${String.format(Locale.US, "%.1f", bid.vendorRating)}"
-                tvAmount.text     = "PKR ${String.format(Locale.US, "%,d", bid.amount)}"
+
+                tvVendorName.text     = bid.vendorName
+                tvVendorCategory.text = bid.vendorCategory.ifEmpty { "Service Provider" }
+                tvRating.text         = String.format(Locale.US, "%.1f", bid.vendorRating)
+                tvAmount.text         = "PKR ${String.format(Locale.US, "%,d", bid.amount)}"
                 val h = bid.estimatedHours
-                tvHours.text      = if (h % 1 == 0.0) "Est. ${h.toInt()}h" else "Est. ${h}h"
-                tvNote.text       = bid.note.ifBlank { "No additional note" }
+                tvHours.text = if (h % 1 == 0.0) "~${h.toInt()} hrs" else "~${h} hrs"
+                tvNote.text  = "\"${bid.note.ifBlank { "No additional note" }}\""
+
+                // Best-price highlight (position 0 = cheapest, bids sorted by amount)
+                val isBest = position == 0 && bids.size > 1
+                viewBestStripe.visibility  = if (isBest) View.VISIBLE else View.GONE
+                layoutBestBadge.visibility = if (isBest) View.VISIBLE else View.GONE
+                if (isBest) {
+                    root.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#F59E0B")))
+                    root.setCardBackgroundColor(Color.parseColor("#FFFEF7"))
+                } else {
+                    root.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#E5E9F2")))
+                    root.setCardBackgroundColor(Color.WHITE)
+                }
 
                 if (requestStatus == "open") {
                     btnAccept.visibility = View.VISIBLE

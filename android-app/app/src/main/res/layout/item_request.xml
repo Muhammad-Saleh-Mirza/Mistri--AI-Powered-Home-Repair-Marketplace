@@ -4,12 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="10dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="3dp"
-    app:cardBackgroundColor="@color/colorSurface">
+    app:cardCornerRadius="18dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/colorSurface"
+    app:strokeColor="@color/cardStroke"
+    app:strokeWidth="1.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,53 +19,90 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- ── Row 1: icon + title/service + status pill ─────────────── -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="12dp">
 
-            <TextView
-                android:id="@+id/tvTitle"
+            <!-- Category icon background (coloured square) -->
+            <FrameLayout
+                android:id="@+id/flCategoryIcon"
+                android:layout_width="44dp"
+                android:layout_height="44dp">
+
+                <TextView
+                    android:id="@+id/tvCategoryIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="🔧"
+                    android:textSize="20sp" />
+            </FrameLayout>
+
+            <!-- Title + service -->
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="@color/textPrimary" />
+                android:orientation="vertical"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp">
 
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:layout_marginBottom="2dp" />
+
+                <TextView
+                    android:id="@+id/tvService"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+
+            <!-- Status pill -->
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="10dp"
                 android:paddingEnd="10dp"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp"
-                android:textSize="11sp"
-                android:textColor="@color/white"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textSize="10sp"
+                android:textStyle="bold"
                 android:textAllCaps="true" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvService"
+        <!-- ── Thin divider ──────────────────────────────────────────── -->
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@color/colorPrimary"
-            android:layout_marginBottom="4dp" />
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginBottom="10dp" />
 
+        <!-- ── Date row ───────────────────────────────────────────────── -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:textColor="@color/textSecondary"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="4dp"
+            android:drawablePadding="4dp" />
 
+        <!-- ── Vendor assignment ──────────────────────────────────────── -->
         <TextView
             android:id="@+id/tvAssignedTo"
             android:layout_width="match_parent"
@@ -74,6 +113,7 @@
             android:layout_marginBottom="4dp"
             android:visibility="gone" />
 
+        <!-- ── Accepted amount ────────────────────────────────────────── -->
         <TextView
             android:id="@+id/tvAcceptedAmount"
             android:layout_width="match_parent"
@@ -84,21 +124,21 @@
             android:layout_marginBottom="8dp"
             android:visibility="gone" />
 
+        <!-- ── Action buttons ─────────────────────────────────────────── -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDelete"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="6dp"
             android:text="🗑  Delete Request"
             android:textAllCaps="false"
             android:textSize="13sp"
             android:textColor="@color/colorError"
             android:visibility="gone"
             app:strokeColor="@color/colorError"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="10dp" />
 
-        <!-- Shown when status=assigned and vendor is en route -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTrackLocation"
             android:layout_width="match_parent"
@@ -108,15 +148,17 @@
             android:textAllCaps="false"
             android:textSize="14sp"
             android:visibility="gone"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="10dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAction"
             android:layout_width="match_parent"
             android:layout_height="44dp"
+            android:layout_marginTop="4dp"
             android:textAllCaps="false"
             android:textSize="14sp"
-            app:cornerRadius="8dp" />
+            android:textStyle="bold"
+            app:cornerRadius="10dp" />
 
         <TextView
             android:id="@+id/tvRated"
@@ -130,7 +172,6 @@
             android:gravity="center"
             android:visibility="gone" />
 
-        <!-- Secondary chat button shown on completed jobs so conversation stays accessible -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChat"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -142,7 +183,7 @@
             android:textSize="13sp"
             android:visibility="gone"
             app:strokeColor="@color/colorPrimary"
-            app:cornerRadius="8dp" />
+            app:cornerRadius="10dp" />
 
     </LinearLayout>
 

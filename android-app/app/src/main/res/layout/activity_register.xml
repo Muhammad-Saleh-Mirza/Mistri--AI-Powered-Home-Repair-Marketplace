@@ -1,467 +1,559 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  FixUp · Register (redesigned)
+  Gradient hero (toolbar + avatar + title) → elevated form card.
+  ALL original IDs preserved exactly so View Binding / Kotlin keeps working:
+  toolbar, layoutProfilePic, ivProfilePic, tilName/etName, tilEmail/etEmail,
+  tilPassword/etPassword, tilPhone/etPhone, tilCnic/etCnic,
+  cardCnicFront/ivCnicFront/layoutCnicFrontHint, cardCnicBack/ivCnicBack/layoutCnicBackHint,
+  cardCustomer/ivCustomerCheck, cardVendor/ivVendorCheck,
+  layoutCategory/tilCategory/actvCategory, btnRegister, progressBar, tvLogin,
+  layoutNadraOverlay/progressNadra/tvNadraSuccess/tvNadraStatus/tvNadraSubtext.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorSurface">
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:paddingTop="16dp">
+            android:orientation="vertical">
 
-            <!-- Toolbar area (back arrow handled by setSupportActionBar) -->
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_marginStart="-24dp"
-                android:layout_marginEnd="-24dp"
-                android:background="@color/colorSurface"
-                app:navigationIconTint="@color/colorPrimary" />
-
-            <!-- Profile Picture Picker -->
+            <!-- ░░ HERO ░░ -->
             <LinearLayout
-                android:id="@+id/layoutProfilePic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp">
+                android:background="@drawable/bg_hero_gradient"
+                android:paddingBottom="40dp">
 
-                <ImageView
-                    android:id="@+id/ivProfilePic"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/bg_circle_avatar"
-                    android:clipToOutline="true"
-                    android:scaleType="centerCrop"
-                    android:clickable="true"
-                    android:focusable="true" />
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@android:color/transparent"
+                    app:navigationIconTint="@color/white" />
+
+                <!-- Profile Picture Picker -->
+                <LinearLayout
+                    android:id="@+id/layoutProfilePic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:layout_marginTop="4dp">
+
+                    <FrameLayout
+                        android:layout_width="92dp"
+                        android:layout_height="92dp">
+
+                        <ImageView
+                            android:id="@+id/ivProfilePic"
+                            android:layout_width="92dp"
+                            android:layout_height="92dp"
+                            android:background="@drawable/bg_circle_avatar"
+                            android:clipToOutline="true"
+                            android:scaleType="centerCrop"
+                            android:clickable="true"
+                            android:focusable="true" />
+
+                        <!-- camera badge -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_icon_circle"
+                            android:padding="6dp"
+                            android:src="@drawable/ic_camera"
+                            app:tint="@color/colorPrimary" />
+                    </FrameLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_add_photo"
+                        android:textSize="12sp"
+                        android:textColor="#D6E2FF"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/tv_add_photo"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorPrimary"
-                    android:layout_marginTop="6dp" />
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/title_create_account"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="14dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/tv_join_fixup"
+                    android:textSize="14sp"
+                    android:textColor="#D6E2FF"
+                    android:layout_marginTop="4dp" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title_create_account"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="@color/textPrimary"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="4dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tv_join_fixup"
-                android:textSize="14sp"
-                android:textColor="@color/textSecondary"
-                android:layout_marginBottom="24dp" />
-
-            <!-- Full Name — helper text reminds vendor to match CNIC exactly -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilName"
+            <!-- ░░ FORM CARD ░░ -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_full_name"
-                app:helperTextEnabled="true"
-                app:helperText="(Name must be entered exactly as written on your CNIC)">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="-28dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="12dp"
+                app:strokeWidth="0dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etName"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName|textCapWords" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:orientation="vertical"
+                    android:padding="20dp">
 
-            <!-- Email -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/hint_email">
+                    <!-- Full Name -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/hint_full_name"
+                        app:helperTextEnabled="true"
+                        app:helperText="Enter your name exactly as written on your CNIC"
+                        app:startIconDrawable="@drawable/ic_user">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName|textCapWords" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Password -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/hint_password"
-                app:endIconMode="password_toggle">
+                    <!-- Email -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/hint_email"
+                        app:startIconDrawable="@drawable/ic_email">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textEmailAddress" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Phone -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/hint_phone">
+                    <!-- Password -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/hint_password"
+                        app:endIconMode="password_toggle"
+                        app:startIconDrawable="@drawable/ic_lock">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone"
-                    android:maxLength="11" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- CNIC -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilCnic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:hint="@string/hint_cnic">
+                    <!-- Phone -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/hint_phone"
+                        app:startIconDrawable="@drawable/ic_phone">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etCnic"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="13" />
-            </com.google.android.material.textfield.TextInputLayout>
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="phone"
+                            android:maxLength="11" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- CNIC Photo Upload -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="📷 CNIC Photos (for verification)"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/textPrimary"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp" />
+                    <!-- CNIC -->
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilCnic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:hint="@string/hint_cnic"
+                        app:startIconDrawable="@drawable/ic_id_card">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etCnic"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:maxLength="13" />
+                    </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Front of CNIC -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCnicFront"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#E0E0E0">
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="22dp"
+                        android:background="@color/divider" />
+
+                    <!-- CNIC Photo Upload -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CNIC Photos"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginTop="20dp"
+                        android:drawablePadding="8dp"
+                        android:gravity="center_vertical"
+                        android:drawableTint="@color/colorPrimary"
+                        app:drawableStartCompat="@drawable/ic_id_card" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Upload clear photos of both sides for verification"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="12dp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="8dp">
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="90dp">
-                            <ImageView
-                                android:id="@+id/ivCnicFront"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:visibility="gone" />
+                        android:orientation="horizontal">
+
+                        <!-- Front of CNIC -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardCnicFront"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
                             <LinearLayout
-                                android:id="@+id/layoutCnicFrontHint"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:gravity="center"
-                                android:background="#F5F5F5">
+                                android:padding="6dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="96dp">
+                                    <ImageView
+                                        android:id="@+id/ivCnicFront"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:visibility="gone" />
+                                    <LinearLayout
+                                        android:id="@+id/layoutCnicFrontHint"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_upload_dashed">
+                                        <ImageView
+                                            android:layout_width="26dp"
+                                            android:layout_height="26dp"
+                                            android:src="@drawable/ic_camera"
+                                            app:tint="@color/colorPrimary" />
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Tap to upload"
+                                            android:textSize="11sp"
+                                            android:textColor="@color/textSecondary"
+                                            android:layout_marginTop="4dp" />
+                                    </LinearLayout>
+                                </FrameLayout>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="📷"
-                                    android:textSize="22sp" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Tap to upload"
-                                    android:textSize="10sp"
-                                    android:textColor="#AAAAAA"
-                                    android:layout_marginTop="2dp" />
+                                    android:text="Front Side"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/textPrimary"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="2dp" />
                             </LinearLayout>
-                        </FrameLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Front Side"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/textPrimary"
-                            android:layout_marginTop="6dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                        </com.google.android.material.card.MaterialCardView>
 
-                <!-- Back of CNIC -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCnicBack"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="10dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="1dp"
-                    app:strokeColor="#E0E0E0">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="8dp">
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="90dp">
-                            <ImageView
-                                android:id="@+id/ivCnicBack"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:scaleType="centerCrop"
-                                android:visibility="gone" />
+                        <!-- Back of CNIC -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardCnicBack"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="0dp">
                             <LinearLayout
-                                android:id="@+id/layoutCnicBackHint"
                                 android:layout_width="match_parent"
-                                android:layout_height="match_parent"
+                                android:layout_height="wrap_content"
                                 android:orientation="vertical"
                                 android:gravity="center"
-                                android:background="#F5F5F5">
+                                android:padding="6dp">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="96dp">
+                                    <ImageView
+                                        android:id="@+id/ivCnicBack"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:scaleType="centerCrop"
+                                        android:visibility="gone" />
+                                    <LinearLayout
+                                        android:id="@+id/layoutCnicBackHint"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:orientation="vertical"
+                                        android:gravity="center"
+                                        android:background="@drawable/bg_upload_dashed">
+                                        <ImageView
+                                            android:layout_width="26dp"
+                                            android:layout_height="26dp"
+                                            android:src="@drawable/ic_camera"
+                                            app:tint="@color/colorPrimary" />
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Tap to upload"
+                                            android:textSize="11sp"
+                                            android:textColor="@color/textSecondary"
+                                            android:layout_marginTop="4dp" />
+                                    </LinearLayout>
+                                </FrameLayout>
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="📷"
-                                    android:textSize="22sp" />
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Tap to upload"
-                                    android:textSize="10sp"
-                                    android:textColor="#AAAAAA"
-                                    android:layout_marginTop="2dp" />
+                                    android:text="Back Side"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/textPrimary"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="2dp" />
                             </LinearLayout>
-                        </FrameLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Back Side"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/textPrimary"
-                            android:layout_marginTop="6dp" />
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
 
-            <!-- Role selection -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tv_i_am_a"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/textPrimary"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp" />
+                    <!-- Divider -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="22dp"
+                        android:background="@color/divider" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- Customer card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardCustomer"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="@color/colorPrimary">
+                    <!-- Role selection -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_i_am_a"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="12dp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/ivCustomerCheck"
-                            android:layout_width="wrap_content"
+                        <!-- Customer card -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardCustomer"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="🏠"
-                            android:textSize="28sp"
-                            android:layout_marginBottom="8dp" />
+                            android:layout_weight="1"
+                            android:layout_marginEnd="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardBackgroundColor="@color/colorPrimarySurface"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="2dp"
+                            app:strokeColor="@color/colorPrimary">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/ivCustomerCheck"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:drawableTint="@color/colorPrimary"
+                                    app:drawableTopCompat="@drawable/ic_role_home" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/tv_need_services"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/colorPrimary"
+                                    android:gravity="center"
+                                    android:layout_marginTop="8dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <!-- Vendor card -->
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardVendor"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="@string/tv_need_services"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/colorPrimary"
-                            android:gravity="center" />
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            app:cardBackgroundColor="@color/colorSurface"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp"
+                            app:strokeWidth="2dp"
+                            app:strokeColor="@color/divider">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:padding="18dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/ivVendorCheck"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:drawableTint="@color/textSecondary"
+                                    app:drawableTopCompat="@drawable/ic_role_wrench" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/tv_provide_services"
+                                    android:textSize="13sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/textSecondary"
+                                    android:gravity="center"
+                                    android:layout_marginTop="8dp" />
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
 
-                <!-- Vendor card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardVendor"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="@color/divider">
-
+                    <!-- Category (vendor only) -->
                     <LinearLayout
+                        android:id="@+id/layoutCategory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp"
-                        android:gravity="center">
+                        android:layout_marginTop="14dp"
+                        android:visibility="gone">
 
-                        <TextView
-                            android:id="@+id/ivVendorCheck"
-                            android:layout_width="wrap_content"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/tilCategory"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="🔧"
-                            android:textSize="28sp"
-                            android:layout_marginBottom="8dp" />
+                            android:hint="@string/hint_service_category">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/tv_provide_services"
-                            android:textSize="13sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/textSecondary"
-                            android:gravity="center" />
+                            <AutoCompleteTextView
+                                android:id="@+id/actvCategory"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:focusable="false"
+                                android:clickable="true" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
 
-            <!-- Category (vendor only) -->
-            <LinearLayout
-                android:id="@+id/layoutCategory"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="16dp"
-                android:visibility="gone">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilCategory"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/hint_service_category">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/actvCategory"
+                    <!-- Register button -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRegister"
                         android:layout_width="match_parent"
+                        android:layout_height="54dp"
+                        android:layout_marginTop="24dp"
+                        android:text="@string/btn_register"
+                        android:textAllCaps="false"
+                        app:cornerRadius="14dp" />
+
+                    <!-- Progress -->
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:clickable="true" />
-                </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:visibility="gone" />
 
-            </LinearLayout>
+                    <!-- Sign in link -->
+                    <TextView
+                        android:id="@+id/tvLogin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="16dp"
+                        android:padding="6dp"
+                        android:text="@string/tv_sign_in"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="14sp"
+                        android:clickable="true"
+                        android:focusable="true" />
 
-            <!-- Register button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRegister"
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:layout_marginTop="28dp"
-                android:text="@string/btn_register"
-                android:textAllCaps="false" />
-
-            <!-- Progress -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:visibility="gone" />
-
-            <!-- Sign in link -->
-            <TextView
-                android:id="@+id/tvLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="24dp"
-                android:text="@string/tv_sign_in"
-                android:textColor="@color/colorPrimary"
-                android:textSize="14sp"
-                android:clickable="true"
-                android:focusable="true" />
+                android:layout_height="24dp" />
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- NADRA Verification Overlay — vendors only, shown before Firebase registration -->
+    <!-- ░░ NADRA Verification Overlay (vendors only) ░░ -->
     <FrameLayout
         android:id="@+id/layoutNadraOverlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#D9000000"
+        android:background="#CC0F172A"
         android:visibility="gone">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="300dp"
+            android:layout_width="320dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="16dp">
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -470,21 +562,20 @@
                 android:gravity="center"
                 android:padding="32dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🏛️"
-                    android:textSize="44sp"
-                    android:gravity="center"
-                    android:layout_marginBottom="4dp" />
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:src="@drawable/ic_shield_check"
+                    app:tint="@color/colorPrimary"
+                    android:layout_marginBottom="12dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="NADRA Verification"
-                    android:textSize="17sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#212121"
+                    android:textColor="@color/textPrimary"
                     android:gravity="center"
                     android:layout_marginBottom="2dp" />
 
@@ -493,7 +584,7 @@
                     android:layout_height="wrap_content"
                     android:text="National Database &amp; Registration Authority"
                     android:textSize="11sp"
-                    android:textColor="#888888"
+                    android:textColor="@color/textHint"
                     android:gravity="center"
                     android:layout_marginBottom="24dp" />
 
@@ -501,15 +592,16 @@
                     android:id="@+id/progressNadra"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:indeterminate="true" />
+                    android:indeterminate="true"
+                    app:indicatorColor="@color/colorPrimary"
+                    app:trackColor="@color/colorPrimarySurface" />
 
-                <TextView
+                <ImageView
                     android:id="@+id/tvNadraSuccess"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✅"
-                    android:textSize="44sp"
-                    android:gravity="center"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:src="@drawable/ic_check_circle"
+                    app:tint="@color/colorSuccess"
                     android:visibility="gone" />
 
                 <TextView
@@ -519,7 +611,7 @@
                     android:text="Connecting to NADRA database…"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="#212121"
+                    android:textColor="@color/textPrimary"
                     android:gravity="center"
                     android:layout_marginTop="16dp" />
 
@@ -529,7 +621,7 @@
                     android:layout_height="wrap_content"
                     android:text="Please wait"
                     android:textSize="12sp"
-                    android:textColor="#757575"
+                    android:textColor="@color/textSecondary"
                     android:gravity="center"
                     android:layout_marginTop="6dp" />
 

@@ -1,4 +1,4 @@
-package com.example.fixup.auth
+﻿package com.example.fixup.auth
 
 import android.Manifest
 import android.content.Context
@@ -136,23 +136,23 @@ class RegisterActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    // ── Role card selection ────────────────────────────────────────────────────
+    // â”€â”€ Role card selection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun setRoleCustomer() {
         selectedRole = Constants.ROLE_CUSTOMER
         binding.layoutCategory.visibility = View.GONE
-        binding.cardCustomer.strokeColor = Color.parseColor("#1565C0")
-        binding.cardVendor.strokeColor   = Color.parseColor("#E0E0E0")
+        binding.cardCustomer.strokeColor = Color.parseColor("#1A56DB")
+        binding.cardVendor.strokeColor   = Color.parseColor("#E5E9F2")
     }
 
     private fun setRoleVendor() {
         selectedRole = Constants.ROLE_VENDOR
         binding.layoutCategory.visibility = View.VISIBLE
-        binding.cardVendor.strokeColor   = Color.parseColor("#1565C0")
-        binding.cardCustomer.strokeColor = Color.parseColor("#E0E0E0")
+        binding.cardVendor.strokeColor   = Color.parseColor("#1A56DB")
+        binding.cardCustomer.strokeColor = Color.parseColor("#E5E9F2")
     }
 
-    // ── Register ───────────────────────────────────────────────────────────────
+    // â”€â”€ Register â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun attemptRegister() {
         binding.tilName.error     = null
@@ -249,27 +249,27 @@ class RegisterActivity : AppCompatActivity() {
         else doRegister()
     }
 
-    // ── NADRA verification (vendor only) ─────────────────────────────────────
+    // â”€â”€ NADRA verification (vendor only) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun showNadraVerification(cnic: String, onComplete: () -> Unit) {
         binding.layoutNadraOverlay.visibility = View.VISIBLE
         binding.progressNadra.visibility      = View.VISIBLE
         binding.tvNadraSuccess.visibility     = View.GONE
-        binding.tvNadraStatus.text            = "Connecting to NADRA database…"
+        binding.tvNadraStatus.text            = "Connecting to NADRA databaseâ€¦"
         binding.tvNadraSubtext.text           = "Please wait"
 
-        // Phase 2 — show masked CNIC being checked
+        // Phase 2 â€” show masked CNIC being checked
         Handler(Looper.getMainLooper()).postDelayed({
             val masked = cnic.take(5) + "XXXXXXXX"
             binding.tvNadraStatus.text  = "Verifying CNIC: $masked"
             binding.tvNadraSubtext.text = "Cross-referencing identity records"
 
-            // Phase 3 — confirmed
+            // Phase 3 â€” confirmed
             Handler(Looper.getMainLooper()).postDelayed({
                 binding.progressNadra.visibility  = View.GONE
                 binding.tvNadraSuccess.visibility = View.VISIBLE
                 binding.tvNadraStatus.text        = "Identity Verified!"
-                binding.tvNadraSubtext.text       = "Proceeding with registration…"
+                binding.tvNadraSubtext.text       = "Proceeding with registrationâ€¦"
 
                 // Dismiss and continue
                 Handler(Looper.getMainLooper()).postDelayed({
@@ -361,7 +361,7 @@ class RegisterActivity : AppCompatActivity() {
             }
     }
 
-    // ── Location ───────────────────────────────────────────────────────────────
+    // â”€â”€ Location â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private fun requestVendorLocation(uid: String) {
         val fine   = Manifest.permission.ACCESS_FINE_LOCATION
