@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  FixUp · Post Request (redesigned)
+  Mistri · Post Request (redesigned)
   Centerpiece = AI Analysis result card (gradient header, confidence badge,
   PKR price band with emphasised "Recommended").
   ALL original IDs + view types preserved for View Binding / Kotlin:
@@ -28,7 +28,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/Theme.FixUp.Toolbar"
+            android:theme="@style/Theme.Mistri.Toolbar"
             app:title="Post New Request"
             app:titleTextColor="@color/white"
             app:navigationIconTint="@color/white"
@@ -78,7 +78,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FixUp Vision is inspecting your photo"
+                    android:text="Mistri Vision is inspecting your photo"
                     android:textColor="@color/textSecondary"
                     android:textSize="12sp"
                     android:layout_marginTop="4dp" />
@@ -348,7 +348,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Powered by FixUp Vision"
+                                android:text="Powered by Mistri Vision"
                                 android:textColor="#CFE0FF"
                                 android:textSize="11sp" />
                         </LinearLayout>

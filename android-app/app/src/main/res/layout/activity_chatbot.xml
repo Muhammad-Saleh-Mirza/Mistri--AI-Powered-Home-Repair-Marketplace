@@ -5,48 +5,341 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:background="@color/colorBackground">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- ── Gradient header ──────────────────────────────────────────────── -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:elevation="4dp">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_chat_header"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="14dp"
+        android:elevation="4dp">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/Theme.FixUp.Toolbar"
-            app:title="@string/title_chatbot"
-            app:titleTextColor="@color/white"
-            app:navigationIconTint="@color/white"
-            app:logo="@drawable/ic_chatbot"
-            app:logoScaleType="centerCrop"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+        <!-- Back button -->
+        <FrameLayout
+            android:id="@+id/btnBotBack"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_header_circle_btn"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="11dp">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="@null" />
+        </FrameLayout>
 
-    <!-- Content -->
+        <!-- Bot avatar (rounded-square) -->
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_bot_avatar_rounded"
+            android:layout_marginEnd="11dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="🤖"
+                android:textSize="18sp" />
+        </FrameLayout>
+
+        <!-- Bot name + status -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MistriBot"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:layout_marginEnd="7dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="AI"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:textColor="#B45309"
+                    android:background="@drawable/bg_chip_amber"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvBotStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ready to help"
+                android:textSize="10.5sp"
+                android:textColor="#C7FFFFFF"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <!-- Info button -->
+        <FrameLayout
+            android:id="@+id/btnBotInfo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_header_circle_btn"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_info"
+                android:tint="@color/white"
+                android:contentDescription="@null" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- ── Content area ──────────────────────────────────────────────────── -->
     <LinearLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:background="@color/colorSurface">
+        android:background="@color/colorBackground">
 
-        <!-- Messages list -->
+        <!-- Welcome state (visible until first message is sent) -->
+        <LinearLayout
+            android:id="@+id/layoutWelcome"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="24dp">
+
+            <FrameLayout
+                android:layout_width="82dp"
+                android:layout_height="82dp"
+                android:background="@drawable/bg_chatbot_orb"
+                android:layout_marginBottom="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="🤖"
+                    android:textSize="32sp" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi, I'm MistriBot!"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/textPrimary"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ask me about home repair, pricing, or vendor bids"
+                android:textSize="13sp"
+                android:textColor="@color/textSecondary"
+                android:gravity="center"
+                android:layout_marginBottom="28dp" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSuggestEstimate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="13dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1.5dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:rippleColor="@color/colorPrimarySurface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💰"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="13dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Get Price Estimate"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="How much should this repair cost?"
+                            android:textSize="11.5sp"
+                            android:textColor="@color/textSecondary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSuggestFairPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="13dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1.5dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:rippleColor="@color/colorPrimarySurface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚖️"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="13dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Is this bid fair?"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Help me choose between vendor bids"
+                            android:textSize="11.5sp"
+                            android:textColor="@color/textSecondary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardSuggestService"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="13dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/divider"
+                app:strokeWidth="1.5dp"
+                app:cardBackgroundColor="@color/colorSurface"
+                app:rippleColor="@color/colorPrimarySurface">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="14dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔧"
+                        android:textSize="18sp"
+                        android:layout_marginEnd="13dp" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Identify my problem"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="What service do I need?"
+                            android:textSize="11.5sp"
+                            android:textColor="@color/textSecondary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+        <!-- Messages list (hidden until first message) -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerMessages"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:background="@color/colorBackground"
             android:clipToPadding="false"
             android:paddingTop="8dp"
-            android:paddingBottom="4dp" />
+            android:paddingBottom="8dp"
+            android:visibility="gone" />
 
-        <!-- Quick reply chips -->
+        <!-- Quick-reply chips -->
         <HorizontalScrollView
             android:id="@+id/scrollChips"
             android:layout_width="match_parent"
@@ -54,42 +347,55 @@
             android:scrollbars="none"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:paddingBottom="8dp">
+            android:paddingTop="8dp"
+            android:paddingBottom="6dp">
 
             <com.google.android.material.chip.ChipGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:singleLine="true">
+                android:singleLine="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipEstimate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_estimate"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    app:chipStrokeColor="@color/colorAccent"
+                    android:textColor="#B45309"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="#FEF7EC"
+                    app:chipStrokeColor="#FBDBA7"
                     app:chipStrokeWidth="1dp"
-                    android:textColor="@color/colorAccent" />
+                    app:chipCornerRadius="20dp"
+                    app:chipIconVisible="false"
+                    app:checkedIconVisible="false" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipFairPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_fair_price"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    app:chipStrokeColor="@color/colorAccent"
+                    android:textColor="#B45309"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="#FEF7EC"
+                    app:chipStrokeColor="#FBDBA7"
                     app:chipStrokeWidth="1dp"
-                    android:textColor="@color/colorAccent" />
+                    app:chipCornerRadius="20dp"
+                    app:chipIconVisible="false"
+                    app:checkedIconVisible="false" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipService"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/chip_service"
-                    style="@style/Widget.MaterialComponents.Chip.Action"
-                    app:chipStrokeColor="@color/colorAccent"
+                    android:textColor="#B45309"
+                    android:textSize="12sp"
+                    app:chipBackgroundColor="#FEF7EC"
+                    app:chipStrokeColor="#FBDBA7"
                     app:chipStrokeWidth="1dp"
-                    android:textColor="@color/colorAccent" />
+                    app:chipCornerRadius="20dp"
+                    app:chipIconVisible="false"
+                    app:checkedIconVisible="false" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
@@ -99,9 +405,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="8dp"
             android:gravity="center_vertical"
             android:background="@color/colorSurface"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="12dp"
             android:elevation="4dp">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -109,11 +418,13 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/hint_ask_me"
+                android:hint="@string/hint_message"
                 app:boxCornerRadiusTopStart="24dp"
                 app:boxCornerRadiusTopEnd="24dp"
                 app:boxCornerRadiusBottomStart="24dp"
-                app:boxCornerRadiusBottomEnd="24dp">
+                app:boxCornerRadiusBottomEnd="24dp"
+                app:boxStrokeColor="@color/divider"
+                app:boxBackgroundColor="@color/colorBackground">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMessage"
@@ -121,22 +432,29 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLines="4"
+                    android:textSize="13sp"
                     android:background="@null" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
+            <FrameLayout
                 android:id="@+id/btnSend"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:minWidth="0dp"
-                android:paddingStart="0dp"
-                android:paddingEnd="0dp"
-                app:icon="@drawable/ic_send"
-                app:iconGravity="textStart"
-                app:iconPadding="0dp"
-                app:cornerRadius="24dp" />
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_vendor_avatar"
+                android:backgroundTint="@color/colorPrimary"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginStart="9dp"
+                android:elevation="4dp">
+
+                <ImageView
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_send"
+                    android:tint="@color/white"
+                    android:contentDescription="@null" />
+            </FrameLayout>
 
         </LinearLayout>
     </LinearLayout>

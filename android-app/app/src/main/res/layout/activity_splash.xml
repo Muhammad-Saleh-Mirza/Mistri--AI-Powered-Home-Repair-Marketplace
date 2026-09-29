@@ -22,7 +22,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="FixUp"
+            android:text="Mistri"
             android:textSize="40sp"
             android:textStyle="bold"
             android:textColor="@color/white"

@@ -4,132 +4,187 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
+    android:layout_marginBottom="11dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardCornerRadius="12dp"
-    app:cardElevation="3dp"
-    app:cardBackgroundColor="@color/colorSurface">
+    app:cardCornerRadius="18dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/colorSurface"
+    app:strokeColor="@color/cardStroke"
+    app:strokeWidth="1.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="13dp"
+        android:paddingBottom="0dp">
 
+        <!-- Top row: customer name + status chip + date -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="6dp">
+            android:layout_marginBottom="7dp">
 
             <TextView
                 android:id="@+id/tvCustomerName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="13sp"
+                android:textSize="11.5sp"
+                android:textStyle="bold"
                 android:textColor="@color/textSecondary" />
 
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="9dp"
+                android:paddingEnd="9dp"
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
                 android:layout_marginEnd="8dp"
-                android:textSize="11sp"
+                android:textSize="9.5sp"
+                android:textStyle="bold"
                 android:textColor="@color/white"
                 android:textAllCaps="true"
+                android:letterSpacing="0.04"
                 android:visibility="gone" />
 
             <TextView
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="@color/textSecondary" />
-
+                android:textSize="11sp"
+                android:textColor="@color/textHint" />
         </LinearLayout>
 
+        <!-- Title -->
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="14.5sp"
             android:textStyle="bold"
             android:textColor="@color/textPrimary"
             android:layout_marginBottom="4dp" />
 
+        <!-- Damage / detected class -->
         <TextView
             android:id="@+id/tvDamage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:textColor="@color/textSecondary"
-            android:layout_marginBottom="6dp" />
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginBottom="8dp" />
 
+        <!-- Price range -->
         <TextView
             android:id="@+id/tvPriceRange"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimary"
-            android:layout_marginBottom="4dp" />
+            android:layout_marginBottom="5dp" />
 
+        <!-- Distance -->
         <TextView
             android:id="@+id/tvDistance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textColor="@color/textSecondary"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="5dp"
             android:visibility="gone" />
 
+        <!-- Accepted bid amount (My Jobs tab) -->
         <TextView
             android:id="@+id/tvAcceptedBid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="13sp"
-            android:textColor="@color/statusCompleted"
             android:textStyle="bold"
+            android:textColor="@color/statusCompleted"
             android:layout_marginBottom="4dp"
             android:visibility="gone" />
 
+        <!-- Action buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:orientation="vertical"
+            android:paddingTop="9dp"
+            android:paddingBottom="13dp">
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginBottom="9dp" />
+
+            <!-- Place Bid button (Available Jobs only) -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnOpenChat"
-                android:layout_width="0dp"
+                android:id="@+id/btnPlaceBid"
+                android:layout_width="match_parent"
                 android:layout_height="44dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:text="💬 Chat"
+                android:text="💰  Place Bid"
                 android:textAllCaps="false"
                 android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
                 android:visibility="gone"
-                app:cornerRadius="8dp" />
+                app:backgroundTint="@color/colorPrimary"
+                app:cornerRadius="10dp"
+                app:elevation="0dp"
+                app:rippleColor="#33FFFFFF" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnMarkComplete"
-                android:layout_width="0dp"
-                android:layout_height="44dp"
-                android:layout_weight="1"
-                android:text="✓ Mark Complete"
-                android:textAllCaps="false"
-                android:textSize="13sp"
-                android:visibility="gone"
-                app:cornerRadius="8dp"
-                app:backgroundTint="@color/statusCompleted" />
+            <!-- Chat + Mark Complete row (My Jobs only) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnOpenChat"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="7dp"
+                    android:text="💬  Chat"
+                    android:textAllCaps="false"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:strokeColor="@color/colorPrimary"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="10dp"
+                    app:backgroundTint="@color/colorPrimarySurface"
+                    app:rippleColor="@color/colorPrimary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnMarkComplete"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="✓  Complete"
+                    android:textAllCaps="false"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:visibility="gone"
+                    app:backgroundTint="@color/statusCompleted"
+                    app:cornerRadius="10dp"
+                    app:elevation="0dp"
+                    app:rippleColor="#33FFFFFF" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

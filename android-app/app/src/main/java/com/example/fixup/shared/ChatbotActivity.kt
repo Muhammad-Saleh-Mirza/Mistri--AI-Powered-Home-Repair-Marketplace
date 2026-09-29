@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
@@ -34,10 +33,8 @@ class ChatbotActivity : AppCompatActivity() {
     private val client = OkHttpClient()
 
     private val messages = mutableListOf<ChatMessage>()
-    private val history  = mutableListOf<Pair<String, String>>()  // ("user"/"assistant", text)
+    private val history  = mutableListOf<Pair<String, String>>()
     private lateinit var adapter: ChatbotAdapter
-
-    private val WELCOME get() = getString(R.string.chatbot_welcome)
 
     data class ChatMessage(
         val text: String,
@@ -54,9 +51,6 @@ class ChatbotActivity : AppCompatActivity() {
         binding = ActivityChatbotBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.contentLayout) { view, insets ->
             val sys = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
@@ -69,22 +63,32 @@ class ChatbotActivity : AppCompatActivity() {
         adapter = ChatbotAdapter(messages)
         binding.recyclerMessages.adapter = adapter
 
+        binding.btnBotBack.setOnClickListener { finish() }
+        binding.btnBotInfo.setOnClickListener {
+            android.widget.Toast.makeText(this, "MistriBot helps with home repair in Pakistan 🏠", android.widget.Toast.LENGTH_SHORT).show()
+        }
         binding.btnSend.setOnClickListener { sendMessage() }
 
         setupChips()
-        postWelcomeMessage()
+        setupWelcomeCards()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) { finish(); return true }
-        return super.onOptionsItemSelected(item)
+    private var firstMessageSent = false
+
+    private fun showConversation() {
+        if (!firstMessageSent) {
+            firstMessageSent = true
+            binding.layoutWelcome.visibility = View.GONE
+            binding.recyclerMessages.visibility = View.VISIBLE
+        }
     }
 
     // ── Welcome & chips ────────────────────────────────────────────────────────
 
-    private fun postWelcomeMessage() {
-        addBotMessage(WELCOME)
-        history.add(Pair("assistant", WELCOME))
+    private fun setupWelcomeCards() {
+        binding.cardSuggestEstimate.setOnClickListener  { sendChip(getString(R.string.chip_estimate)) }
+        binding.cardSuggestFairPrice.setOnClickListener { sendChip(getString(R.string.chip_fair_price)) }
+        binding.cardSuggestService.setOnClickListener   { sendChip(getString(R.string.chip_service)) }
     }
 
     private fun setupChips() {
@@ -113,6 +117,7 @@ class ChatbotActivity : AppCompatActivity() {
     }
 
     private fun processUserMessage(text: String) {
+        showConversation()
         addUserMessage(text)
         history.add(Pair("user", text))
         showTyping()
@@ -178,12 +183,14 @@ class ChatbotActivity : AppCompatActivity() {
     }
 
     private fun showTyping() {
+        binding.tvBotStatus.text = "Typing…"
         messages.add(ChatMessage(text = "", isUser = false, isTyping = true))
         adapter.notifyItemInserted(messages.size - 1)
         scrollToBottom()
     }
 
     private fun removeTyping() {
+        binding.tvBotStatus.text = "Ready to help"
         val idx = messages.indexOfLast { it.isTyping }
         if (idx >= 0) {
             messages.removeAt(idx)
@@ -204,9 +211,7 @@ class ChatbotActivity : AppCompatActivity() {
         private val items: List<ChatMessage>
     ) : RecyclerView.Adapter<ChatbotAdapter.VH>() {
 
-        private val bubbleBotColor  = Color.parseColor("#EEEEEE")
-        private val bubbleUserColor = Color.parseColor("#1976D2")
-        private val dotColor        = Color.parseColor("#757575")
+        private val dotColor = Color.parseColor("#94A3B8")
 
         inner class VH(val b: ItemChatbotMessageBinding) : RecyclerView.ViewHolder(b.root) {
             var dotAnimSet: AnimatorSet? = null
@@ -226,11 +231,9 @@ class ChatbotActivity : AppCompatActivity() {
                 holder.b.layoutBot.visibility  = View.GONE
                 holder.b.layoutUser.visibility = View.VISIBLE
                 holder.b.tvUserMessage.text    = msg.text
-                holder.b.bubbleUser.background = roundedBg(bubbleUserColor)
             } else {
                 holder.b.layoutUser.visibility = View.GONE
                 holder.b.layoutBot.visibility  = View.VISIBLE
-                holder.b.bubbleBot.background  = roundedBg(bubbleBotColor)
 
                 if (msg.isTyping) {
                     holder.b.tvBotMessage.visibility  = View.GONE
@@ -249,12 +252,6 @@ class ChatbotActivity : AppCompatActivity() {
             super.onViewRecycled(holder)
             holder.dotAnimSet?.cancel()
             holder.dotAnimSet = null
-        }
-
-        private fun roundedBg(color: Int) = GradientDrawable().apply {
-            shape        = GradientDrawable.RECTANGLE
-            cornerRadius = 18f
-            setColor(color)
         }
 
         private fun styleDots(b: ItemChatbotMessageBinding) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  FixUp · Login (redesigned)
+  Mistri · Login (redesigned)
   Branded gradient hero + elevated white form card.
   All original IDs preserved: btnLanguage, tilEmail/etEmail,
   tilPassword/etPassword, btnLogin, progressBar, tvRegister, tvForgotPassword.
@@ -113,7 +113,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="24dp"
-                    android:text="Sign in to continue to FixUp"
+                    android:text="Sign in to continue to Mistri"
                     android:textColor="@color/textSecondary"
                     android:textSize="14sp" />
 
@@ -203,7 +203,7 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="14dp"
                         android:paddingEnd="14dp"
-                        android:text="new to FixUp?"
+                        android:text="new to Mistri?"
                         android:textColor="@color/textHint"
                         android:textSize="12sp" />
 

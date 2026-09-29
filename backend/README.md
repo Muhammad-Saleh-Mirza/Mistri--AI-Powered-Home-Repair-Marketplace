@@ -1,5 +1,5 @@
 ---
-title: FixUp Backend
+title: Mistri Backend
 emoji: 🔧
 colorFrom: blue
 colorTo: red
@@ -7,9 +7,9 @@ sdk: docker
 pinned: false
 ---
 
-# FixUp Backend API
+# Mistri Backend API
 
-Flask backend for FixUp home services app.
+Flask backend for Mistri home services app.
 
 ## Endpoints
 - GET /health - Health check

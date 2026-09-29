@@ -1,238 +1,405 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorBackground">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- ── Hero gradient header ──────────────────────────────────────── -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:background="@color/colorPrimary"
-        app:elevation="4dp">
+        android:background="@drawable/bg_hero_gradient"
+        android:clipChildren="false">
 
+        <!-- Transparent toolbar keeps ActionBar/menu working -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:theme="@style/Theme.FixUp.Toolbar"
-            app:title="FixUp"
-            app:titleTextColor="@color/white"
-            app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light" />
+            android:background="@android:color/transparent"
+            android:theme="@style/Theme.Mistri.Toolbar" />
 
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/colorBackground"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <!-- Content switching area -->
-        <FrameLayout
+        <!-- Greeting + stats below the toolbar -->
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="?attr/actionBarSize"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="20dp">
 
-            <!-- Shared spinner -->
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="visible" />
-
-            <!-- Tab 0: Available Jobs -->
+            <!-- Name + icon row -->
             <LinearLayout
-                android:id="@+id/tabAvailable"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="16dp">
 
-                <!-- Greeting card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
-                    android:layout_marginBottom="0dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="3dp"
-                    app:cardBackgroundColor="@color/colorPrimary">
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="16dp"
-                        android:gravity="center_vertical">
+                        android:text="Welcome back"
+                        android:textSize="10.5sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.07"
+                        android:textAllCaps="true"
+                        android:textColor="#8CFFFFFF"
+                        android:layout_marginBottom="3dp" />
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tvVendorGreeting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/tv_hello_vendor"
+                        android:textSize="19sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="4dp" />
 
-                            <TextView
-                                android:id="@+id/tvVendorGreeting"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/tv_hello_vendor"
-                                android:textSize="17sp"
-                                android:textStyle="bold"
-                                android:textColor="@color/white" />
+                    <TextView
+                        android:id="@+id/tvVendorCategory"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="11.5sp"
+                        android:textStyle="bold"
+                        android:textColor="#C7FFFFFF" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/tvVendorCategory"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textSize="13sp"
-                                android:textColor="#CCFFFFFF"
-                                android:layout_marginTop="4dp" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔧"
-                            android:textSize="36sp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Location banner: shown when vendor has no saved location -->
-                <TextView
-                    android:id="@+id/tvLocationBanner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginTop="8dp"
-                    android:background="#FFF3E0"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="@string/tv_location_banner"
-                    android:textColor="#E65100"
-                    android:textSize="12sp"
-                    android:visibility="gone" />
-
+                <!-- Service icon badge -->
                 <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1">
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_hero_icon"
+                    android:layout_marginStart="12dp">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerAvailable"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clipToPadding="false"
-                        android:padding="12dp"
-                        android:paddingBottom="16dp" />
-
-                    <LinearLayout
-                        android:id="@+id/emptyAvailableLayout"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:padding="32dp"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="🔧"
-                            android:textSize="48sp"
-                            android:layout_marginBottom="12dp" />
-
-                        <TextView
-                            android:id="@+id/tvEmptyAvailable"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/tv_no_jobs_available"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/textPrimary"
-                            android:gravity="center"
-                            android:layout_marginBottom="4dp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/tv_no_jobs_hint"
-                            android:textSize="13sp"
-                            android:textColor="@color/textSecondary"
-                            android:gravity="center" />
-                    </LinearLayout>
+                        android:text="🔧"
+                        android:textSize="24sp" />
                 </FrameLayout>
+
             </LinearLayout>
 
-            <!-- Tab 1: My Jobs -->
-            <FrameLayout
-                android:id="@+id/tabMyJobs"
+            <!-- Stat pills row -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_hero_stat_pill"
+                    android:layout_marginEnd="4.5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp">
+
+                    <TextView
+                        android:id="@+id/tvStatRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="–"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="RATING"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.03"
+                        android:textColor="#A6FFFFFF"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_hero_stat_pill"
+                    android:layout_marginStart="4.5dp"
+                    android:layout_marginEnd="4.5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp">
+
+                    <TextView
+                        android:id="@+id/tvStatJobs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="–"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="JOBS DONE"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.03"
+                        android:textColor="#A6FFFFFF"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_hero_stat_pill"
+                    android:layout_marginStart="4.5dp"
+                    android:paddingTop="9dp"
+                    android:paddingBottom="9dp">
+
+                    <TextView
+                        android:id="@+id/tvStatWeekly"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="–"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="THIS WEEK"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true"
+                        android:letterSpacing="0.03"
+                        android:textColor="#A6FFFFFF"
+                        android:layout_marginTop="2dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- ── Content area ──────────────────────────────────────────────── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <!-- Shared spinner overlay -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+        <!-- Tab 0: Available Jobs -->
+        <LinearLayout
+            android:id="@+id/tabAvailable"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <!-- Location banner (shown when no vendor location saved) -->
+            <LinearLayout
+                android:id="@+id/tvLocationBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_location_banner"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:visibility="gone">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚠️"
+                    android:textSize="13sp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/tv_location_banner"
+                    android:textSize="11.5sp"
+                    android:textColor="#92400E"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerMyJobs"
+                    android:id="@+id/recyclerAvailable"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:clipToPadding="false"
-                    android:padding="12dp"
+                    android:padding="16dp"
+                    android:paddingTop="10dp"
                     android:paddingBottom="16dp" />
 
                 <LinearLayout
-                    android:id="@+id/emptyMyJobsLayout"
+                    android:id="@+id/emptyAvailableLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:orientation="vertical"
                     android:gravity="center"
-                    android:padding="32dp"
+                    android:padding="40dp"
                     android:visibility="gone">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="💼"
-                        android:textSize="48sp"
-                        android:layout_marginBottom="12dp" />
+                    <FrameLayout
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:background="@drawable/bg_empty_orb"
+                        android:layout_marginBottom="20dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="🔧"
+                            android:textSize="42sp" />
+                    </FrameLayout>
 
                     <TextView
-                        android:id="@+id/tvEmptyMyJobs"
+                        android:id="@+id/tvEmptyAvailable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/tv_no_my_jobs"
-                        android:textSize="15sp"
+                        android:text="@string/tv_no_jobs_available"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/textPrimary"
                         android:gravity="center"
-                        android:layout_marginBottom="4dp" />
+                        android:layout_marginBottom="8dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/tv_no_my_jobs_hint"
-                        android:textSize="13sp"
+                        android:text="@string/tv_no_jobs_hint"
+                        android:textSize="12sp"
                         android:textColor="@color/textSecondary"
-                        android:gravity="center" />
+                        android:gravity="center"
+                        android:lineSpacingMultiplier="1.6" />
                 </LinearLayout>
             </FrameLayout>
+        </LinearLayout>
 
+        <!-- Tab 1: My Jobs -->
+        <FrameLayout
+            android:id="@+id/tabMyJobs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerMyJobs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:padding="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="16dp" />
+
+            <LinearLayout
+                android:id="@+id/emptyMyJobsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="40dp"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_empty_orb"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="💼"
+                        android:textSize="42sp" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvEmptyMyJobs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_no_my_jobs"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_no_my_jobs_hint"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.6" />
+            </LinearLayout>
         </FrameLayout>
 
-        <!-- Bottom navigation -->
+    </FrameLayout>
+
+    <!-- ── Bottom navigation ─────────────────────────────────────────── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_nav_rounded_top"
+        android:elevation="12dp">
+
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorSurface"
+            android:background="@android:color/transparent"
             app:menu="@menu/nav_vendor" />
+    </FrameLayout>
 
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

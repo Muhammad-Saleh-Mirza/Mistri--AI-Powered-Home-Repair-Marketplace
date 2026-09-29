@@ -99,9 +99,16 @@ class ChatActivity : AppCompatActivity() {
 
         isVendor = uid == vendorId
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = if (!isVendor) vendorName else "Chat"
+        // Custom header — no ActionBar
+        val partnerName = if (!isVendor) vendorName else "Customer"
+        binding.tvChatPartnerName.text = partnerName
+        binding.tvChatAvatarInitials.text = partnerName.split(" ")
+            .take(2).joinToString("") { it.firstOrNull()?.uppercase() ?: "" }
+
+        binding.btnChatBack.setOnClickListener { finish() }
+        binding.btnCallContact.setOnClickListener {
+            Toast.makeText(this, "Calling $partnerName…", Toast.LENGTH_SHORT).show()
+        }
 
         // All action buttons start hidden; updateButtons() controls visibility
         binding.btnStartJourney.visibility = View.GONE
@@ -183,11 +190,26 @@ class ChatActivity : AppCompatActivity() {
                 if (doc == null || !doc.exists()) return@addSnapshotListener
                 currentStatus   = doc.getString("status") ?: "assigned"
                 isVendorEnRoute = doc.getBoolean("isVendorEnRoute") ?: false
-                if (requestTitle == "request") requestTitle = doc.getString("title") ?: "request"
 
+                // Job context strip
+                val title = doc.getString("title") ?: ""
+                if (title.isNotEmpty()) {
+                    requestTitle = title
+                    binding.tvJobTitle.text = title
+                }
+                val bidAmount = doc.getLong("acceptedBidAmount")?.toInt() ?: 0
+                if (bidAmount > 0) {
+                    binding.tvJobAmount.text =
+                        "PKR ${String.format(java.util.Locale.US, "%,d", bidAmount)}"
+                    binding.tvJobAmount.visibility = View.VISIBLE
+                }
+
+                // Update partner name + avatar for vendor side (customer name becomes known here)
                 if (isVendor) {
                     val customerName = doc.getString("customerName") ?: "Customer"
-                    supportActionBar?.title = customerName
+                    binding.tvChatPartnerName.text = customerName
+                    binding.tvChatAvatarInitials.text = customerName.split(" ")
+                        .take(2).joinToString("") { it.firstOrNull()?.uppercase() ?: "" }
                     val customerId = doc.getString("customerId") ?: ""
                     if (customerId.isNotEmpty() && !profilePicCache.containsKey(customerId)) {
                         db.collection(Constants.COLLECTION_USERS).document(customerId).get()

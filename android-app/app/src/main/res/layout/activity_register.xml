@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  FixUp · Register (redesigned)
+  Mistri · Register (redesigned)
   Gradient hero (toolbar + avatar + title) → elevated form card.
   ALL original IDs preserved exactly so View Binding / Kotlin keeps working:
   toolbar, layoutProfilePic, ivProfilePic, tilName/etName, tilEmail/etEmail,
@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:text="@string/tv_join_fixup"
+                    android:text="@string/tv_join_mistri"
                     android:textSize="14sp"
                     android:textColor="#D6E2FF"
                     android:layout_marginTop="4dp" />

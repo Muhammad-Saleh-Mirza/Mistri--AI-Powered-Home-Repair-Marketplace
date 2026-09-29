@@ -1,4 +1,4 @@
-# FixUp — Home Services Marketplace
+# Mistri — Home Services Marketplace
 
 A two-sided Android marketplace connecting homeowners with verified service providers in Pakistan.
 
@@ -12,7 +12,7 @@ A two-sided Android marketplace connecting homeowners with verified service prov
 - **Smart Price Estimation** — Combines real bid data from an Excel dataset with a Grok AI call for dynamic, context-aware pricing in PKR
 - **Two-sided marketplace** — Customers post requests; vendors browse and submit bids in real time
 - **Real-time chat** — Customer ↔ vendor messaging per job (Firebase Firestore)
-- **FixUp Chatbot** — Grok-powered assistant for damage identification, price advice, bid comparison, and urgency triage — responds in Urdu and English
+- **Mistri Chatbot** — Grok-powered assistant for damage identification, price advice, bid comparison, and urgency triage — responds in Urdu and English
 - **Admin dashboard** — Manage vendors (suspend/activate), view all requests and platform stats
 - **Vendor rating system** — Customers rate vendors after job completion; ratings update vendor averages
 
@@ -29,7 +29,7 @@ A two-sided Android marketplace connecting homeowners with verified service prov
 | Backend API | Python Flask |
 | AI Damage Model | YOLOv8n-cls (5 classes) |
 | Price Estimation | Grok API + Excel base data (pandas) |
-| Chatbot | Grok API (FixUp-specific) |
+| Chatbot | Grok API (Mistri-specific) |
 | Backend Hosting | Hugging Face Spaces |
 
 ---
@@ -69,7 +69,7 @@ FixUp/
 
 ### 1. Firebase Setup
 
-1. Go to [console.firebase.google.com](https://console.firebase.google.com) → create a project named **FixUp**
+1. Go to [console.firebase.google.com](https://console.firebase.google.com) → create a project named **Mistri**
 2. Enable **Authentication** (Email/Password)
 3. Enable **Firestore Database**
 4. Enable **Storage**

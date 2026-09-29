@@ -1,4 +1,4 @@
-# FixUp — FYP Project Master Brief
+# Mistri — FYP Project Master Brief
 > Read this file at the start of EVERY Claude Code session before writing any code.
 
 ---
@@ -27,7 +27,7 @@ over edge case handling or advanced features.
 | Backend API | Python Flask |
 | AI Damage Model | YOLOv8n-cls (single classification model, 5 classes) |
 | Price Estimation | Grok API + Excel base data (pandas) |
-| Chatbot | Grok API (context-aware, FixUp-specific) |
+| Chatbot | Grok API (context-aware, Mistri-specific) |
 | Backend Hosting | Hugging Face Spaces (free, always on) |
 | App Distribution | Direct APK / Google Play Store |
 
@@ -316,13 +316,13 @@ Respond ONLY in this exact JSON format, no extra text:
                 "justification": f"Based on {base_price['sample_count']} recent bids in {city}"}
 ```
 
-### chatbot.py — FixUp-specific AI assistant
+### chatbot.py — Mistri-specific AI assistant
 ```python
 import requests, json, os
 
 GROK_API_KEY = os.environ.get("GROK_API_KEY")
 
-SYSTEM_PROMPT = """You are FixUp Assistant, a helpful chatbot for the FixUp home services app in Pakistan.
+SYSTEM_PROMPT = """You are Mistri Assistant, a helpful chatbot for the Mistri home services app in Pakistan.
 You help customers with home repair problems. You can:
 1. Help identify what type of damage they have and which service they need
 2. Give honest price advice based on Pakistani market rates (Karachi)
@@ -426,7 +426,7 @@ requests
 
 ## Chatbot — What It Does (Tell This to Jury)
 
-The chatbot is FixUp-specific, not a generic AI. It does 5 things:
+The chatbot is Mistri-specific, not a generic AI. It does 5 things:
 
 1. **Problem identification** — user describes issue in plain text/Urdu, bot identifies damage type and which service they need
 2. **Price advisor** — "is PKR 2500 fair for a hairline crack?" — gives honest market-based answer
@@ -555,14 +555,14 @@ Never hardcode the API key. Test /health and /chat from phone before building ap
 - ❌ Push notifications
 - ❌ Admin registration
 - ❌ Multiple AI models
-- ❌ Generic chatbot — must stay FixUp-specific
+- ❌ Generic chatbot — must stay Mistri-specific
 
 ---
 
 ## File Creation Checklist (Do Before Opening Claude Code)
 
 ### Firebase Setup
-- [ ] console.firebase.google.com → New project → FixUp
+- [ ] console.firebase.google.com → New project → Mistri
 - [ ] Enable Authentication (Email/Password)
 - [ ] Enable Firestore Database
 - [ ] Enable Storage
@@ -737,11 +737,11 @@ with a Grok AI call that factors in damage severity from the customer's descript
 giving a dynamic, context-aware estimate rather than a fixed range."*
 
 **Line about chatbot:**
-*"The chatbot is FixUp-specific — it helps users identify problems, gives honest price
+*"The chatbot is Mistri-specific — it helps users identify problems, gives honest price
 advice based on market data, helps choose between bids, and triages emergencies.
 It responds in both Urdu and English."*
 
 ---
 
-*Last updated: Grok price API added, FixUp-specific chatbot added with 5 use cases,
+*Last updated: Grok price API added, Mistri-specific chatbot added with 5 use cases,
 file counts updated (18 Kotlin, 21 XML, 15 activities).*

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FixUp</string>
+    <string name="app_name">Mistri</string>
     <string name="app_tagline">Your Home, Our Priority</string>
 
     <!-- Login -->
@@ -11,7 +11,7 @@
 
     <!-- Register -->
     <string name="title_create_account">Create Account</string>
-    <string name="tv_join_fixup">Join FixUp today</string>
+    <string name="tv_join_mistri">Join Mistri today</string>
     <string name="tv_add_photo">Add Photo (Optional)</string>
     <string name="hint_full_name">Full Name</string>
     <string name="hint_phone">Phone Number (11 digits)</string>
@@ -24,7 +24,7 @@
     <string name="tv_sign_in">Already have an account? Sign in</string>
 
     <!-- Customer Home -->
-    <string name="tv_welcome">Welcome to FixUp!</string>
+    <string name="tv_welcome">Welcome to Mistri!</string>
     <string name="tv_home_subtitle">Your home repair solution</string>
     <string name="btn_post_request">+ Post New Request</string>
     <string name="tv_how_it_works">📷 Photograph damage  →  AI detects type  →  vendors bid  →  you choose best deal</string>
@@ -80,8 +80,8 @@
     <string name="btn_rate_vendor">⭐ Rate Vendor</string>
 
     <!-- Chatbot -->
-    <string name="title_chatbot">FixUp Assistant</string>
-    <string name="chatbot_welcome">Hi! I\'m the FixUp Assistant. I can help you identify home damage, estimate repair costs, and choose the right service. What problem are you facing today?</string>
+    <string name="title_chatbot">Mistri Assistant</string>
+    <string name="chatbot_welcome">Hi! I\'m the Mistri Assistant. I can help you identify home damage, estimate repair costs, and choose the right service. What problem are you facing today?</string>
     <string name="chip_estimate">Estimate repair cost</string>
     <string name="chip_fair_price">Is my price fair?</string>
     <string name="chip_service">What service do I need?</string>

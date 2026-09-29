@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.FixUp" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.Mistri" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryDark</item>
         <item name="colorOnPrimary">@color/colorOnPrimary</item>
@@ -10,13 +10,13 @@
         <item name="android:colorBackground">@color/colorBackground</item>
         <item name="android:statusBarColor">@color/heroStart</item>
         <item name="android:windowLightStatusBar">false</item>
-        <item name="materialButtonStyle">@style/Widget.FixUp.Button</item>
-        <item name="textInputStyle">@style/Widget.FixUp.TextInputLayout</item>
-        <item name="materialCardViewStyle">@style/Widget.FixUp.CardView</item>
+        <item name="materialButtonStyle">@style/Widget.Mistri.Button</item>
+        <item name="textInputStyle">@style/Widget.Mistri.TextInputLayout</item>
+        <item name="materialCardViewStyle">@style/Widget.Mistri.CardView</item>
     </style>
 
     <!-- Primary filled button — taller, softer corners, no shouting caps -->
-    <style name="Widget.FixUp.Button" parent="Widget.MaterialComponents.Button">
+    <style name="Widget.Mistri.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:minHeight">54dp</item>
         <item name="cornerRadius">14dp</item>
         <item name="android:textSize">16sp</item>
@@ -27,7 +27,7 @@
         <item name="rippleColor">#33FFFFFF</item>
     </style>
 
-    <style name="Widget.FixUp.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+    <style name="Widget.Mistri.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:minHeight">54dp</item>
         <item name="cornerRadius">14dp</item>
         <item name="android:textSize">16sp</item>
@@ -40,7 +40,7 @@
     </style>
 
     <!-- Filled, soft-cornered inputs -->
-    <style name="Widget.FixUp.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.Mistri.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxBackgroundColor">@color/colorInputBackground</item>
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="boxStrokeWidth">0dp</item>
@@ -55,7 +55,7 @@
         <item name="endIconTint">@color/textSecondary</item>
     </style>
 
-    <style name="Widget.FixUp.CardView" parent="Widget.MaterialComponents.CardView">
+    <style name="Widget.Mistri.CardView" parent="Widget.MaterialComponents.CardView">
         <item name="cardCornerRadius">18dp</item>
         <item name="cardElevation">0dp</item>
         <item name="cardBackgroundColor">@color/colorSurface</item>
@@ -63,7 +63,7 @@
         <item name="strokeWidth">1dp</item>
     </style>
 
-    <style name="Theme.FixUp.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+    <style name="Theme.Mistri.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 </resources>

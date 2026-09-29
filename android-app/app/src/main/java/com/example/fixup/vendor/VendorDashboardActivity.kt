@@ -171,12 +171,19 @@ class VendorDashboardActivity : AppCompatActivity() {
                 vendorLat = doc.getDouble("latitude")
                 vendorLon = doc.getDouble("longitude")
                 if (currentVendorName.isNotEmpty()) {
-                    binding.tvVendorGreeting.text = "Hello, $currentVendorName!"
+                    val firstName = currentVendorName.split(" ").first()
+                    binding.tvVendorGreeting.text = "Hello, $firstName 👋"
                 }
                 loadAvatarImage(doc.getString("profilePictureUrl") ?: "")
                 if (category.isNotEmpty()) {
-                    binding.tvVendorCategory.text = "📂 $category"
+                    binding.tvVendorCategory.text = category
                 }
+                // Stat pills
+                val rating = doc.getDouble("rating") ?: 0.0
+                val totalJobs = doc.getLong("totalJobs") ?: 0L
+                binding.tvStatRating.text =
+                    if (rating > 0.0) String.format(Locale.US, "%.1f", rating) else "New"
+                binding.tvStatJobs.text = totalJobs.toString()
                 binding.progressBar.visibility = View.GONE
                 if (category.isEmpty()) {
                     binding.tvEmptyAvailable.text = "Service category not set. Contact admin."
@@ -474,19 +481,23 @@ class VendorDashboardActivity : AppCompatActivity() {
                             "completed" -> getString(R.string.status_completed)
                             else        -> req.status.replaceFirstChar(Char::uppercase)
                         }
+                        val chipBg = if (req.status == "assigned") Color.parseColor("#F59E0B")
+                                     else Color.parseColor("#0E9F6E")
                         tvStatus.background = GradientDrawable().apply {
                             shape        = GradientDrawable.RECTANGLE
-                            cornerRadius = 12f
-                            setColor(
-                                if (req.status == "assigned") Color.parseColor("#FF9800")
-                                else Color.parseColor("#9E9E9E")
-                            )
+                            cornerRadius = 20f
+                            setColor(chipBg)
                         }
                     }
                     else -> tvStatus.visibility = View.GONE
                 }
 
-                val isAssigned = req.status == "assigned"
+                val isAssigned  = req.status == "assigned"
+                val isAvailMode = onChatClick == null && onMarkComplete == null
+
+                // Place Bid CTA (Available Jobs only)
+                btnPlaceBid.visibility = if (isAvailMode) View.VISIBLE else View.GONE
+                btnPlaceBid.setOnClickListener { onItemClick(req) }
 
                 val showChat = onChatClick != null && (isAssigned || req.status == "completed")
                 btnOpenChat.visibility = if (showChat) View.VISIBLE else View.GONE

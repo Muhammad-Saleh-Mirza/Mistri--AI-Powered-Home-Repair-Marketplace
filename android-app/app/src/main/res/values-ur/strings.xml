@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FixUp</string>
+    <string name="app_name">Mistri</string>
     <string name="app_tagline">آپ کا گھر، ہماری ذمہ داری</string>
 
     <!-- Login -->
@@ -11,7 +11,7 @@
 
     <!-- Register -->
     <string name="title_create_account">اکاؤنٹ بنائیں</string>
-    <string name="tv_join_fixup">آج FixUp سے جڑیں</string>
+    <string name="tv_join_mistri">آج Mistri سے جڑیں</string>
     <string name="tv_add_photo">تصویر شامل کریں (اختیاری)</string>
     <string name="hint_full_name">پورا نام</string>
     <string name="hint_phone">فون نمبر (11 ہندسے)</string>
@@ -24,7 +24,7 @@
     <string name="tv_sign_in">پہلے سے اکاؤنٹ ہے؟ سائن ان کریں</string>
 
     <!-- Customer Home -->
-    <string name="tv_welcome">FixUp میں خوش آمدید!</string>
+    <string name="tv_welcome">Mistri میں خوش آمدید!</string>
     <string name="tv_home_subtitle">آپ کے گھر کی مرمت کا حل</string>
     <string name="btn_post_request">+ نئی درخواست پوسٹ کریں</string>
     <string name="tv_how_it_works">📷 نقصان کی تصویر → AI پتہ لگائے → ٹھیکیدار بولی لگائیں → بہترین ڈیل چنیں</string>
@@ -80,8 +80,8 @@
     <string name="btn_rate_vendor">⭐ ٹھیکیدار کو ریٹ کریں</string>
 
     <!-- Chatbot -->
-    <string name="title_chatbot">FixUp اسسٹنٹ</string>
-    <string name="chatbot_welcome">ہیلو! میں FixUp اسسٹنٹ ہوں۔ میں گھر کے نقصان کی شناخت، مرمت کی لاگت کا تخمینہ، اور صحیح سروس چننے میں آپ کی مدد کر سکتا ہوں۔ آج آپ کا کیا مسئلہ ہے؟</string>
+    <string name="title_chatbot">Mistri اسسٹنٹ</string>
+    <string name="chatbot_welcome">ہیلو! میں Mistri اسسٹنٹ ہوں۔ میں گھر کے نقصان کی شناخت، مرمت کی لاگت کا تخمینہ، اور صحیح سروس چننے میں آپ کی مدد کر سکتا ہوں۔ آج آپ کا کیا مسئلہ ہے؟</string>
     <string name="chip_estimate">مرمت کی لاگت کا تخمینہ</string>
     <string name="chip_fair_price">کیا میری قیمت مناسب ہے؟</string>
     <string name="chip_service">مجھے کس خدمت کی ضرورت ہے؟</string>

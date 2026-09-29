@@ -7,32 +7,37 @@
     android:paddingTop="3dp"
     android:paddingBottom="3dp">
 
+    <!-- Sender avatar (bottom-left) -->
     <ImageView
         android:id="@+id/ivSenderAvatar"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity="start|bottom"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="6dp"
         android:layout_marginBottom="4dp"
         android:background="@drawable/bg_circle_avatar"
+        android:backgroundTint="@color/colorPrimary"
         android:scaleType="centerCrop" />
 
+    <!-- Received bubble (white, stroke, tail on bottom-left) -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="42dp"
         android:layout_marginEnd="72dp"
         app:cardCornerRadius="18dp"
         app:cardElevation="1dp"
-        app:cardBackgroundColor="@color/bubbleReceived">
+        app:cardBackgroundColor="@color/colorSurface"
+        app:strokeColor="@color/divider"
+        app:strokeWidth="1dp"
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:paddingStart="13dp"
+            android:paddingEnd="13dp"
             android:paddingTop="10dp"
             android:paddingBottom="8dp">
 
@@ -40,7 +45,7 @@
                 android:id="@+id/tvSenderName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="11sp"
+                android:textSize="10.5sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorPrimary"
                 android:layout_marginBottom="3dp" />
@@ -49,9 +54,9 @@
                 android:id="@+id/tvMessageText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textColor="@color/textPrimary"
-                android:lineSpacingMultiplier="1.3" />
+                android:lineSpacingMultiplier="1.45" />
 
             <TextView
                 android:id="@+id/tvTimestamp"
@@ -59,11 +64,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginTop="3dp"
-                android:textSize="10sp"
-                android:textColor="@color/textSecondary" />
-
+                android:textSize="9.5sp"
+                android:textColor="@color/textHint" />
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
 
 </FrameLayout>

@@ -187,7 +187,7 @@ class PostRequestActivity : AppCompatActivity() {
             shouldShowRequestPermissionRationale(perm) ->
                 showRationaleDialog(
                     "Camera Access Needed",
-                    "FixUp needs camera access to photograph the damage."
+                    "Mistri needs camera access to photograph the damage."
                 ) { cameraPermissionLauncher.launch(perm) }
             else ->
                 cameraPermissionLauncher.launch(perm)
@@ -205,7 +205,7 @@ class PostRequestActivity : AppCompatActivity() {
             shouldShowRequestPermissionRationale(perm) ->
                 showRationaleDialog(
                     "Storage Access Needed",
-                    "FixUp needs storage access to pick images from your gallery."
+                    "Mistri needs storage access to pick images from your gallery."
                 ) { storagePermissionLauncher.launch(perm) }
             else ->
                 storagePermissionLauncher.launch(perm)
@@ -503,7 +503,7 @@ class PostRequestActivity : AppCompatActivity() {
     private fun showPermissionDeniedDialog(permissionName: String, usageDescription: String) {
         AlertDialog.Builder(this)
             .setTitle("$permissionName Permission Required")
-            .setMessage("FixUp needs $permissionName access to $usageDescription. Please enable it in Settings.")
+            .setMessage("Mistri needs $permissionName access to $usageDescription. Please enable it in Settings.")
             .setPositiveButton("Open Settings") { _, _ ->
                 startActivity(Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                     data = android.net.Uri.fromParts("package", packageName, null)
