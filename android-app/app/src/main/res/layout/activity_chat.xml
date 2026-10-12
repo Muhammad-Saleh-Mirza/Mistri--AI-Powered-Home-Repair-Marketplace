@@ -248,6 +248,40 @@
                 app:elevation="0dp"
                 app:rippleColor="#33FFFFFF" />
 
+            <!-- Customer: Share my location with the vendor -->
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/btnShareLocation"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginBottom="7dp"
+                android:text="@string/btn_share_location"
+                android:textAllCaps="false"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="11dp" />
+
+            <!-- Vendor: open the location the customer shared -->
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/btnViewCustomerLocation"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginBottom="7dp"
+                android:text="@string/btn_view_customer_location"
+                android:textAllCaps="false"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"
+                android:visibility="gone"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1.5dp"
+                app:cornerRadius="11dp" />
+
             <!-- Customer: Rate Vendor (amber outlined) -->
             <com.google.android.material.button.MaterialButton
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"

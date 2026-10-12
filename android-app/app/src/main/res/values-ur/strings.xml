@@ -177,4 +177,45 @@
     <string name="btn_pay_now_action">💳 ادائیگی کریں</string>
     <string name="btn_rate_vendor_action">ٹھیکیدار کو ریٹ کریں</string>
     <string name="btn_view">دیکھیں</string>
+
+    <!-- Completion proof / review -->
+    <string name="proof_title">کام مکمل کریں</string>
+    <string name="proof_heading">مکمل کام کی تصویر شامل کریں</string>
+    <string name="proof_hint">مکمل شدہ کام کی تصویر لیں۔ گاہک ادائیگی اور ریٹنگ سے پہلے اسے دیکھ سکے گا۔</string>
+    <string name="proof_no_photo">ابھی تک کوئی تصویر نہیں</string>
+    <string name="proof_btn_camera">📷 تصویر لیں</string>
+    <string name="proof_btn_gallery">🖼 گیلری</string>
+    <string name="proof_btn_submit">مکمل کے طور پر نشان زد کریں</string>
+    <string name="proof_toast_need_photo">پہلے مکمل شدہ کام کی تصویر شامل کریں</string>
+    <string name="proof_toast_camera_permission">تصویر لینے کے لیے کیمرے کی اجازت درکار ہے</string>
+    <string name="proof_toast_photo_failed">یہ تصویر لوڈ نہیں ہو سکی۔ کوئی اور تصویر چنیں۔</string>
+    <string name="review_title">مکمل شدہ کام</string>
+    <string name="review_vendor_done">%1$s نے یہ کام مکمل کر دیا ہے</string>
+    <string name="review_photo_label">تکمیل کی تصویر</string>
+    <string name="review_no_photo">ٹھیکیدار نے کوئی تصویر منسلک نہیں کی۔</string>
+    <string name="review_btn_pay">ٹھیک ہے — ادائیگی کریں</string>
+    <string name="review_btn_rate">ٹھیک ہے — ٹھیکیدار کو ریٹ کریں</string>
+
+    <!-- List filters -->
+    <string name="filter_all">سب</string>
+    <string name="filter_today">آج</string>
+    <string name="filter_week">اس ہفتے</string>
+    <string name="filter_in_progress">جاری</string>
+
+    <!-- Location sharing -->
+    <string name="btn_share_location">📍 میری لوکیشن شیئر کریں</string>
+    <string name="btn_update_location">📍 لوکیشن شیئر ہو گئی — اپ ڈیٹ کریں</string>
+    <string name="btn_view_customer_location">📍 گاہک کی لوکیشن کھولیں</string>
+    <string name="dialog_share_location_title">لوکیشن شیئر کریں؟</string>
+    <string name="dialog_share_location_msg">آپ کی موجودہ لوکیشن %1$s کو بھیجی جائے گی تاکہ وہ آپ کو ڈھونڈ سکیں۔ یہ ایک بار شیئر ہوتی ہے اور ٹریک نہیں کی جاتی۔</string>
+    <string name="dialog_share_location_positive">شیئر کریں</string>
+    <string name="toast_location_shared">لوکیشن ٹھیکیدار کے ساتھ شیئر ہو گئی</string>
+    <string name="toast_location_unavailable">آپ کی لوکیشن نہیں مل سکی۔ GPS آن کر کے دوبارہ کوشش کریں۔</string>
+    <string name="toast_location_permission">لوکیشن شیئر کرنے کے لیے اجازت درکار ہے</string>
+    <string name="toast_no_maps_app">اس ڈیوائس پر کوئی میپس ایپ نہیں ملی</string>
+    <string name="msg_location_shared">📍 میں نے اپنی لوکیشن آپ کے ساتھ شیئر کر دی ہے</string>
+
+    <string name="msg_location_card_title">شیئر کی گئی لوکیشن</string>
+    <string name="msg_location_card_hint">میپس میں کھولنے کے لیے ٹیپ کریں</string>
+    <string name="msg_location_card_action">میپس میں کھولیں ›</string>
 </resources>

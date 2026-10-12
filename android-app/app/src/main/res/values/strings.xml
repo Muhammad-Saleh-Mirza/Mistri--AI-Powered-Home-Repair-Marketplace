@@ -177,4 +177,45 @@
     <string name="btn_pay_now_action">💳 Pay Now</string>
     <string name="btn_rate_vendor_action">Rate Vendor</string>
     <string name="btn_view">View</string>
+
+    <!-- Completion proof / review -->
+    <string name="proof_title">Complete Job</string>
+    <string name="proof_heading">Add a completion photo</string>
+    <string name="proof_hint">Take a photo of the finished work. The customer will see it before paying and rating.</string>
+    <string name="proof_no_photo">No photo yet</string>
+    <string name="proof_btn_camera">📷 Take Photo</string>
+    <string name="proof_btn_gallery">🖼 Gallery</string>
+    <string name="proof_btn_submit">Mark as Complete</string>
+    <string name="proof_toast_need_photo">Please add a photo of the finished work first</string>
+    <string name="proof_toast_camera_permission">Camera permission is needed to take a photo</string>
+    <string name="proof_toast_photo_failed">Could not load that photo. Try another one.</string>
+    <string name="review_title">Completed Work</string>
+    <string name="review_vendor_done">%1$s marked this job as complete</string>
+    <string name="review_photo_label">Completion photo</string>
+    <string name="review_no_photo">The vendor did not attach a photo.</string>
+    <string name="review_btn_pay">Looks good — Pay Now</string>
+    <string name="review_btn_rate">Looks good — Rate Vendor</string>
+
+    <!-- List filters -->
+    <string name="filter_all">All</string>
+    <string name="filter_today">Today</string>
+    <string name="filter_week">This Week</string>
+    <string name="filter_in_progress">In Progress</string>
+
+    <!-- Location sharing -->
+    <string name="btn_share_location">📍 Share My Location</string>
+    <string name="btn_update_location">📍 Location Shared — Update</string>
+    <string name="btn_view_customer_location">📍 Open Customer Location</string>
+    <string name="dialog_share_location_title">Share your location?</string>
+    <string name="dialog_share_location_msg">Your current location will be sent to %1$s so they can find you. It is shared once and is not tracked.</string>
+    <string name="dialog_share_location_positive">Share</string>
+    <string name="toast_location_shared">Location shared with the vendor</string>
+    <string name="toast_location_unavailable">Could not get your location. Turn on GPS and try again.</string>
+    <string name="toast_location_permission">Location permission is needed to share your location</string>
+    <string name="toast_no_maps_app">No maps app found on this device</string>
+    <string name="msg_location_shared">📍 I shared my location with you</string>
+
+    <string name="msg_location_card_title">Shared location</string>
+    <string name="msg_location_card_hint">Tap to open in Maps</string>
+    <string name="msg_location_card_action">Open in Maps ›</string>
 </resources>

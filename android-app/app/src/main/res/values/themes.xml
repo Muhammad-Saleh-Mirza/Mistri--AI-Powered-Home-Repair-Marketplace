@@ -66,4 +66,13 @@
     <style name="Theme.Mistri.Toolbar" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
+
+    <style name="Widget.Mistri.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_bg</item>
+        <item name="android:textColor">@color/chip_text</item>
+        <item name="chipStrokeColor">@color/chip_stroke</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

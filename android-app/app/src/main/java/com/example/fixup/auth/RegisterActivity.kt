@@ -28,7 +28,7 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import com.example.fixup.utils.ImageUtils
 import java.util.Locale
 
 class RegisterActivity : AppCompatActivity() {
@@ -36,7 +36,6 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private val auth    = FirebaseAuth.getInstance()
     private val db      = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
 
     private var selectedRole    = Constants.ROLE_CUSTOMER
     private var pendingVendorUid: String? = null
@@ -284,40 +283,17 @@ class RegisterActivity : AppCompatActivity() {
         uid: String, name: String, email: String, phone: String,
         cnic: String, isVendor: Boolean, category: String
     ) {
-        fun doSave(profileUrl: String, frontUrl: String, backUrl: String) {
-            saveUserDoc(uid, name, email, phone, cnic, profileUrl, frontUrl, backUrl, isVendor, category)
-        }
-
-        fun uploadBack(profileUrl: String, frontUrl: String) {
-            val backUri = cnicBackUri
-            if (backUri != null) {
-                val ref = storage.reference.child("images/$uid/cnic_back.jpg")
-                ref.putFile(backUri)
-                    .continueWithTask { task -> if (!task.isSuccessful) throw task.exception!!; ref.downloadUrl }
-                    .addOnSuccessListener { url -> doSave(profileUrl, frontUrl, url.toString()) }
-                    .addOnFailureListener { doSave(profileUrl, frontUrl, "") }
-            } else doSave(profileUrl, frontUrl, "")
-        }
-
-        fun uploadFront(profileUrl: String) {
-            val frontUri = cnicFrontUri
-            if (frontUri != null) {
-                val ref = storage.reference.child("images/$uid/cnic_front.jpg")
-                ref.putFile(frontUri)
-                    .continueWithTask { task -> if (!task.isSuccessful) throw task.exception!!; ref.downloadUrl }
-                    .addOnSuccessListener { url -> uploadBack(profileUrl, url.toString()) }
-                    .addOnFailureListener { uploadBack(profileUrl, "") }
-            } else uploadBack(profileUrl, "")
-        }
-
-        val picUri = profilePicUri
-        if (picUri != null) {
-            val ref = storage.reference.child("images/$uid/profile.jpg")
-            ref.putFile(picUri)
-                .continueWithTask { task -> if (!task.isSuccessful) throw task.exception!!; ref.downloadUrl }
-                .addOnSuccessListener { url -> uploadFront(url.toString()) }
-                .addOnFailureListener { uploadFront("") }
-        } else uploadFront("")
+        // Firebase Storage needs the Blaze plan, so images are stored inline in the
+        // user document as small base64 data URIs. Encoding runs off the main thread.
+        Thread {
+            // Avatars are copied into bids/chat caches, so keep them tiny; CNIC scans a bit larger.
+            val profileUrl = profilePicUri?.let { ImageUtils.uriToDataUri(this, it, 256, 70) } ?: ""
+            val frontUrl   = cnicFrontUri?.let  { ImageUtils.uriToDataUri(this, it, 640, 50) } ?: ""
+            val backUrl    = cnicBackUri?.let   { ImageUtils.uriToDataUri(this, it, 640, 50) } ?: ""
+            runOnUiThread {
+                saveUserDoc(uid, name, email, phone, cnic, profileUrl, frontUrl, backUrl, isVendor, category)
+            }
+        }.start()
     }
 
     private fun saveUserDoc(

@@ -1,4 +1,4 @@
-﻿package com.example.fixup.customer
+package com.example.fixup.customer
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -50,7 +50,11 @@ class CustomerHomeActivity : AppCompatActivity() {
     private var cachedProfilePicUrl = ""
     private var toolbarAvatarView: ImageView? = null
 
-    private val requests = mutableListOf<ServiceRequest>()
+    private val requests = mutableListOf<ServiceRequest>()      // shown in the list (filtered)
+    private val allRequests = mutableListOf<ServiceRequest>()   // everything from Firestore
+    private var statusFilter = StatusFilter.ALL
+
+    private enum class StatusFilter { ALL, IN_PROGRESS, COMPLETED }
     private lateinit var adapter: RequestsAdapter
     private var snapshotListener: ListenerRegistration? = null
 
@@ -90,7 +94,7 @@ class CustomerHomeActivity : AppCompatActivity() {
             },
             onActionClick = { req ->
                 when (req.status) {
-                    "completed" -> if (!req.isPaid) payNow(req) else checkAndRate(req)
+                    "completed" -> openCompletionReview(req)
                     "assigned"  -> openChat(req)
                     else        -> openBids(req)
                 }
@@ -100,6 +104,15 @@ class CustomerHomeActivity : AppCompatActivity() {
         )
         binding.recyclerRequests.layoutManager = LinearLayoutManager(this)
         binding.recyclerRequests.adapter = adapter
+
+        binding.chipGroupStatus.setOnCheckedStateChangeListener { _, checkedIds ->
+            statusFilter = when (checkedIds.firstOrNull()) {
+                R.id.chipStatusInProgress -> StatusFilter.IN_PROGRESS
+                R.id.chipStatusCompleted  -> StatusFilter.COMPLETED
+                else                      -> StatusFilter.ALL
+            }
+            applyStatusFilter()
+        }
 
         binding.btnPostRequest.setOnClickListener {
             startActivity(Intent(this, PostRequestActivity::class.java))
@@ -169,9 +182,9 @@ class CustomerHomeActivity : AppCompatActivity() {
             .addSnapshotListener { snapshot, error ->
                 if (error != null) return@addSnapshotListener
                 if (snapshot == null) return@addSnapshotListener
-                requests.clear()
+                allRequests.clear()
                 for (doc in snapshot.documents) {
-                    requests.add(
+                    allRequests.add(
                         ServiceRequest(
                             id                  = doc.id,
                             title               = doc.getString("title") ?: "",
@@ -186,16 +199,8 @@ class CustomerHomeActivity : AppCompatActivity() {
                         )
                     )
                 }
-                requests.sortByDescending { it.createdAt?.seconds ?: 0L }
-                adapter.notifyDataSetChanged()
-                binding.layoutEmpty.visibility =
-                    if (requests.isEmpty()) View.VISIBLE else View.GONE
-                if (requests.isNotEmpty()) {
-                    binding.tvRequestsHeader.text = requests.size.toString()
-                    binding.tvRequestsHeader.visibility = View.VISIBLE
-                } else {
-                    binding.tvRequestsHeader.visibility = View.GONE
-                }
+                allRequests.sortByDescending { it.createdAt?.seconds ?: 0L }
+                applyStatusFilter()
             }
 
         ratingsListener = db.collection(Constants.COLLECTION_RATINGS)
@@ -212,6 +217,27 @@ class CustomerHomeActivity : AppCompatActivity() {
         super.onStop()
         snapshotListener?.remove()
         ratingsListener?.remove()
+    }
+
+    // ── Status filter ──────────────────────────────────────────────────────────
+
+    private fun applyStatusFilter() {
+        requests.clear()
+        requests.addAll(
+            when (statusFilter) {
+                StatusFilter.ALL         -> allRequests
+                StatusFilter.IN_PROGRESS -> allRequests.filter { it.status != "completed" }
+                StatusFilter.COMPLETED   -> allRequests.filter { it.status == "completed" }
+            }
+        )
+        adapter.notifyDataSetChanged()
+        binding.layoutEmpty.visibility = if (requests.isEmpty()) View.VISIBLE else View.GONE
+        if (requests.isNotEmpty()) {
+            binding.tvRequestsHeader.text = requests.size.toString()
+            binding.tvRequestsHeader.visibility = View.VISIBLE
+        } else {
+            binding.tvRequestsHeader.visibility = View.GONE
+        }
     }
 
     // ── Bottom navigation ──────────────────────────────────────────────────────
@@ -259,19 +285,10 @@ class CustomerHomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun payNow(req: ServiceRequest) {
-        startActivity(Intent(this, PaymentActivity::class.java).apply {
-            putExtra("requestId",  req.id)
-            putExtra("vendorId",   req.acceptedVendorId)
-            putExtra("vendorName", req.acceptedVendorName.ifEmpty { "Vendor" })
-            putExtra("amount",     req.acceptedBidAmount)
-        })
-    }
-
-    private fun checkAndRate(req: ServiceRequest) {
-        startActivity(Intent(this, RateVendorActivity::class.java).apply {
+    // Customer sees the vendor's completion photo first, then pays and rates from there.
+    private fun openCompletionReview(req: ServiceRequest) {
+        startActivity(Intent(this, CompletionReviewActivity::class.java).apply {
             putExtra("requestId", req.id)
-            putExtra("vendorId",  req.acceptedVendorId)
         })
     }
 

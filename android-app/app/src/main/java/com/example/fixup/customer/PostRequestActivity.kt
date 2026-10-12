@@ -30,7 +30,6 @@ import com.google.android.gms.location.Priority
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -47,7 +46,6 @@ class PostRequestActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostRequestBinding
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
-    private val storage = FirebaseStorage.getInstance()
 
     private var selectedBitmap: Bitmap? = null
     private var cameraImageUri: android.net.Uri? = null
@@ -357,28 +355,9 @@ class PostRequestActivity : AppCompatActivity() {
 
         setPostLoading(true)
 
-        val imageBytes = ImageUtils.compressImage(bitmap)
-        val storagePath = "images/$uid/${System.currentTimeMillis()}.jpg"
-        val storageRef = storage.reference.child(storagePath)
-
-        storageRef.putBytes(imageBytes)
-            .continueWithTask { task ->
-                if (!task.isSuccessful) throw task.exception!!
-                storageRef.downloadUrl
-            }
-            .addOnSuccessListener { downloadUri ->
-                val imageUrl = downloadUri.toString()
-                fetchUserAndSave(uid, description, city, imageUrl, result)
-            }
-            .addOnFailureListener { e ->
-                setPostLoading(false)
-                Log.e("PostRequest", "Storage upload failed", e)
-                AlertDialog.Builder(this)
-                    .setTitle("Upload Failed")
-                    .setMessage(e.message ?: "Unknown error. Check Logcat for details.")
-                    .setPositiveButton("OK", null)
-                    .show()
-            }
+        // Firebase Storage needs the Blaze plan, so the photo is stored inline in Firestore.
+        val imageUrl = ImageUtils.bitmapToDataUri(bitmap)
+        fetchUserAndSave(uid, description, city, imageUrl, result)
     }
 
     private fun fetchUserAndSave(

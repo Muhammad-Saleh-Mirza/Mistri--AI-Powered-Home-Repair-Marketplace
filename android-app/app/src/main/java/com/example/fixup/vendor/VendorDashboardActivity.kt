@@ -1,4 +1,4 @@
-﻿package com.example.fixup.vendor
+package com.example.fixup.vendor
 
 import android.content.Context
 import android.content.Intent
@@ -30,10 +30,10 @@ import com.example.fixup.utils.LocaleHelper
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 import kotlin.math.*
 
@@ -50,19 +50,24 @@ class VendorDashboardActivity : AppCompatActivity() {
     private var cachedProfilePicUrl = ""
     private var toolbarAvatarView: ImageView? = null
 
-    private val availableJobs = mutableListOf<VendorRequest>()
+    private val availableJobs = mutableListOf<VendorRequest>()      // shown in the list (period-filtered)
+    private val availableAll  = mutableListOf<VendorRequest>()      // after distance filter
     private lateinit var availableAdapter: RequestsAdapter
     private var availableListener: ListenerRegistration? = null
     private val knownJobIds = mutableSetOf<String>()
     private val newJobIds = mutableSetOf<String>()
     private var availableJobsInitialized = false
 
-    private val myJobs = mutableListOf<VendorRequest>()
+    private val myJobs = mutableListOf<VendorRequest>()             // shown in the list (period-filtered)
+    private val myJobsAll = mutableListOf<VendorRequest>()
     private lateinit var myJobsAdapter: RequestsAdapter
     private var myJobsListener: ListenerRegistration? = null
     private var userListener: ListenerRegistration? = null
     private val knownMyJobIds = mutableSetOf<String>()
     private var myJobsInitialized = false
+
+    private enum class PeriodFilter { ALL, TODAY, WEEK }
+    private var periodFilter = PeriodFilter.ALL
 
     data class VendorRequest(
         val id: String,
@@ -94,6 +99,15 @@ class VendorDashboardActivity : AppCompatActivity() {
 
         setupRecyclerViews()
         setupBottomNav()
+
+        binding.chipGroupPeriod.setOnCheckedStateChangeListener { _, checkedIds ->
+            periodFilter = when (checkedIds.firstOrNull()) {
+                R.id.chipPeriodToday -> PeriodFilter.TODAY
+                R.id.chipPeriodWeek  -> PeriodFilter.WEEK
+                else                 -> PeriodFilter.ALL
+            }
+            applyPeriodFilter()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -307,16 +321,47 @@ class VendorDashboardActivity : AppCompatActivity() {
                     if (addedIds.isNotEmpty()) playNewJobSound()
                 }
 
-                availableJobs.clear()
-                availableJobs.addAll(filtered)
-                availableAdapter.notifyDataSetChanged()
+                availableAll.clear()
+                availableAll.addAll(filtered)
+                applyPeriodFilter()
 
-                binding.emptyAvailableLayout.visibility =
-                    if (availableJobs.isEmpty()) View.VISIBLE else View.GONE
                 binding.tvLocationBanner.visibility =
                     if (vLat == null) View.VISIBLE else View.GONE
             }
     }
+
+    // ── Period filter (Today / This Week, by posted date) ─────────────────────
+
+    private fun applyPeriodFilter() {
+        availableJobs.clear()
+        availableJobs.addAll(availableAll.filter { matchesPeriod(it.createdAt) })
+        availableAdapter.notifyDataSetChanged()
+        binding.emptyAvailableLayout.visibility =
+            if (availableJobs.isEmpty()) View.VISIBLE else View.GONE
+
+        myJobs.clear()
+        myJobs.addAll(myJobsAll.filter { matchesPeriod(it.createdAt) })
+        myJobsAdapter.notifyDataSetChanged()
+        binding.emptyMyJobsLayout.visibility =
+            if (myJobs.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun matchesPeriod(createdAt: Timestamp?): Boolean {
+        // A just-posted request has no server timestamp resolved yet — treat it as new.
+        val posted = createdAt?.toDate()?.time ?: return true
+        return when (periodFilter) {
+            PeriodFilter.ALL   -> true
+            PeriodFilter.TODAY -> posted >= startOfToday()
+            PeriodFilter.WEEK  -> posted >= System.currentTimeMillis() - 7L * 24 * 60 * 60 * 1000
+        }
+    }
+
+    private fun startOfToday(): Long = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }.timeInMillis
 
     private fun playNewJobSound() {
         try {
@@ -333,21 +378,21 @@ class VendorDashboardActivity : AppCompatActivity() {
             .whereEqualTo("acceptedVendorId", uid)
             .addSnapshotListener { snapshot, _ ->
                 if (snapshot == null) return@addSnapshotListener
-                myJobs.clear()
+                myJobsAll.clear()
                 for (doc in snapshot.documents) {
                     val status = doc.getString("status") ?: continue
                     if (status == "assigned" || status == "completed") {
-                        myJobs.add(doc.toVendorRequest())
+                        myJobsAll.add(doc.toVendorRequest())
                     }
                 }
-                myJobs.sortByDescending { it.createdAt?.seconds ?: 0L }
+                myJobsAll.sortByDescending { it.createdAt?.seconds ?: 0L }
 
-                val currentIds = myJobs.map { it.id }.toSet()
+                val currentIds = myJobsAll.map { it.id }.toSet()
                 if (!myJobsInitialized) {
                     myJobsInitialized = true
                     knownMyJobIds.addAll(currentIds)
                 } else {
-                    val newlyAccepted = myJobs.filter { it.id !in knownMyJobIds }
+                    val newlyAccepted = myJobsAll.filter { it.id !in knownMyJobIds }
                     knownMyJobIds.clear()
                     knownMyJobIds.addAll(currentIds)
                     if (newlyAccepted.isNotEmpty()) {
@@ -356,9 +401,7 @@ class VendorDashboardActivity : AppCompatActivity() {
                     }
                 }
 
-                myJobsAdapter.notifyDataSetChanged()
-                binding.emptyMyJobsLayout.visibility =
-                    if (myJobs.isEmpty()) View.VISIBLE else View.GONE
+                applyPeriodFilter()
             }
     }
 
@@ -393,32 +436,11 @@ class VendorDashboardActivity : AppCompatActivity() {
     // ── Mark job complete ──────────────────────────────────────────────────────
 
     private fun confirmMarkComplete(req: VendorRequest) {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.dialog_mark_complete_title))
-            .setMessage(getString(R.string.dialog_mark_complete_msg, req.title))
-            .setPositiveButton(getString(R.string.dialog_mark_complete_positive)) { _, _ -> doMarkComplete(req) }
-            .setNegativeButton(getString(R.string.dialog_cancel), null)
-            .show()
-    }
-
-    private fun doMarkComplete(req: VendorRequest) {
-        db.collection(Constants.COLLECTION_REQUESTS).document(req.id)
-            .update(
-                mapOf(
-                    "status"      to "completed",
-                    "completedAt" to FieldValue.serverTimestamp()
-                )
-            )
-            .addOnSuccessListener {
-                AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.dialog_job_complete_title))
-                    .setMessage(getString(R.string.dialog_job_complete_msg))
-                    .setPositiveButton(getString(R.string.dialog_ok), null)
-                    .show()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
-            }
+        // A completion photo is required, so the proof screen finishes the job.
+        startActivity(Intent(this, CompletionProofActivity::class.java).apply {
+            putExtra("requestId",    req.id)
+            putExtra("requestTitle", req.title)
+        })
     }
 
     // ── Shared adapter (both tabs) ─────────────────────────────────────────────

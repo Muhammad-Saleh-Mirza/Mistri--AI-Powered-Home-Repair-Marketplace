@@ -13,7 +13,7 @@ object Constants {
     const val ROLE_VENDOR         = "vendor"
     const val ROLE_ADMIN          = "admin"
     const val DEFAULT_CITY        = "Karachi"
-    const val MAX_DISTANCE_KM     = 5.0
+    const val MAX_DISTANCE_KM     = 50.0
 
     val DETECTED_CLASS_URDU = mapOf(
         "wall_crack"       to "دیوار کی دراڑ",

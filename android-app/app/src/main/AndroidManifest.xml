@@ -52,6 +52,8 @@
         <activity android:name=".vendor.VendorDashboardActivity"
             android:exported="true"/>
         <activity android:name=".vendor.RequestDetailActivity"/>
+        <activity android:name=".vendor.CompletionProofActivity"/>
+        <activity android:name=".customer.CompletionReviewActivity"/>
         <activity android:name=".admin.AdminDashboardActivity"/>
         <activity android:name=".admin.ManageVendorsActivity"/>
         <activity android:name=".admin.AllRequestsActivity"/>

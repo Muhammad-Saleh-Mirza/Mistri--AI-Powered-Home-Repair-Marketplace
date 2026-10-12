@@ -82,6 +82,14 @@ class RequestStatusActivity : AppCompatActivity() {
                     Glide.with(this).load(imageUrl).centerCrop().into(binding.ivDamagePhoto)
                 }
 
+                val completionPhoto = doc.getString("completionPhotoUrl") ?: ""
+                if (completionPhoto.isNotEmpty()) {
+                    binding.cardCompletionPhoto.visibility = View.VISIBLE
+                    Glide.with(this).load(completionPhoto).centerCrop().into(binding.ivCompletionPhoto)
+                } else {
+                    binding.cardCompletionPhoto.visibility = View.GONE
+                }
+
                 binding.tvTitle.text       = doc.getString("title") ?: ""
                 binding.tvCity.text        = "📍 ${doc.getString("city") ?: Constants.DEFAULT_CITY}"
                 binding.tvDescription.text = doc.getString("description") ?: ""

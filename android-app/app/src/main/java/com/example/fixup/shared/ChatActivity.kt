@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -12,8 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -21,8 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.fixup.R
-import com.example.fixup.customer.RateVendorActivity
+import com.example.fixup.customer.CompletionReviewActivity
 import com.example.fixup.databinding.ActivityChatBinding
+import com.example.fixup.vendor.CompletionProofActivity
 import com.example.fixup.databinding.ItemMessageReceivedBinding
 import com.example.fixup.databinding.ItemMessageSentBinding
 import com.example.fixup.utils.Constants
@@ -33,6 +35,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
@@ -66,6 +69,8 @@ class ChatActivity : AppCompatActivity() {
     // ── Tracking state ─────────────────────────────────────────────────────────
     private var currentStatus   = ""
     private var isVendorEnRoute = false
+    private var customerSharedLat: Double? = null
+    private var customerSharedLon: Double? = null
     private var fusedLocation: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
 
@@ -76,12 +81,33 @@ class ChatActivity : AppCompatActivity() {
         else Toast.makeText(this, "Location permission required to share position", Toast.LENGTH_LONG).show()
     }
 
+    private val shareLocationPermLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        if (granted) confirmShareLocation()
+        else Toast.makeText(this, getString(R.string.toast_location_permission), Toast.LENGTH_LONG).show()
+    }
+
+    private val completeJobLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            stopLocationUpdates()
+            db.collection(Constants.COLLECTION_USERS).document(vendorId)
+                .update("totalJobs", FieldValue.increment(1))
+            finish()
+        }
+    }
+
     data class Message(
         val id: String,
         val senderId: String,
         val senderName: String,
         val text: String,
-        val timestamp: Timestamp?
+        val timestamp: Timestamp?,
+        val type: String = "text",       // "text" | "location"
+        val lat: Double? = null,
+        val lon: Double? = null
     )
 
     override fun attachBaseContext(newBase: Context) {
@@ -115,14 +141,18 @@ class ChatActivity : AppCompatActivity() {
         binding.btnMarkComplete.visibility = View.GONE
         binding.btnTrackVendor.visibility  = View.GONE
         binding.btnRateVendor.visibility   = View.GONE
+        binding.btnShareLocation.visibility        = View.GONE
+        binding.btnViewCustomerLocation.visibility = View.GONE
+
+        binding.btnShareLocation.setOnClickListener { onShareLocationClicked() }
+        binding.btnViewCustomerLocation.setOnClickListener { openCustomerLocation() }
 
         binding.btnStartJourney.setOnClickListener { onStartJourneyClicked() }
         binding.btnMarkComplete.setOnClickListener { confirmMarkComplete() }
         binding.btnTrackVendor.setOnClickListener  { openTrackingActivity() }
         binding.btnRateVendor.setOnClickListener {
-            startActivity(Intent(this, RateVendorActivity::class.java).apply {
+            startActivity(Intent(this, CompletionReviewActivity::class.java).apply {
                 putExtra("requestId", requestId)
-                putExtra("vendorId",  vendorId)
             })
         }
         binding.btnSend.setOnClickListener { sendMessage() }
@@ -190,6 +220,8 @@ class ChatActivity : AppCompatActivity() {
                 if (doc == null || !doc.exists()) return@addSnapshotListener
                 currentStatus   = doc.getString("status") ?: "assigned"
                 isVendorEnRoute = doc.getBoolean("isVendorEnRoute") ?: false
+                customerSharedLat = doc.getDouble("customerSharedLatitude")
+                customerSharedLon = doc.getDouble("customerSharedLongitude")
 
                 // Job context strip
                 val title = doc.getString("title") ?: ""
@@ -224,6 +256,17 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun updateButtons() {
+        // Location sharing: customer shares while the job is assigned, vendor opens it in Maps
+        val assigned = currentStatus == "assigned"
+        val hasShared = customerSharedLat != null && customerSharedLon != null
+        binding.btnShareLocation.visibility =
+            if (!isVendor && assigned) View.VISIBLE else View.GONE
+        binding.btnShareLocation.setText(
+            if (hasShared) R.string.btn_update_location else R.string.btn_share_location
+        )
+        binding.btnViewCustomerLocation.visibility =
+            if (isVendor && assigned && hasShared) View.VISIBLE else View.GONE
+
         if (isVendor) {
             binding.btnTrackVendor.visibility = View.GONE
             binding.btnRateVendor.visibility  = View.GONE
@@ -278,7 +321,10 @@ class ChatActivity : AppCompatActivity() {
                             senderId   = doc.getString("senderId") ?: "",
                             senderName = doc.getString("senderName") ?: "",
                             text       = doc.getString("text") ?: "",
-                            timestamp  = doc.getTimestamp("timestamp")
+                            timestamp  = doc.getTimestamp("timestamp"),
+                            type       = doc.getString("type") ?: "text",
+                            lat        = doc.getDouble("lat"),
+                            lon        = doc.getDouble("lon")
                         )
                     )
                 }
@@ -352,33 +398,13 @@ class ChatActivity : AppCompatActivity() {
     // ── Vendor: mark job complete ──────────────────────────────────────────────
 
     private fun confirmMarkComplete() {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.dialog_mark_complete_title))
-            .setMessage(getString(R.string.dialog_mark_complete_msg, requestTitle))
-            .setPositiveButton(getString(R.string.dialog_mark_complete_positive)) { _, _ ->
-                stopLocationUpdates()
-                db.collection(Constants.COLLECTION_REQUESTS).document(requestId)
-                    .update(
-                        "status",          "completed",
-                        "isVendorEnRoute", false,
-                        "completedAt",     FieldValue.serverTimestamp()
-                    )
-                    .addOnSuccessListener {
-                        db.collection(Constants.COLLECTION_USERS).document(vendorId)
-                            .update("totalJobs", FieldValue.increment(1))
-                        AlertDialog.Builder(this)
-                            .setTitle(getString(R.string.dialog_job_complete_title))
-                            .setMessage(getString(R.string.dialog_job_complete_msg))
-                            .setPositiveButton(getString(R.string.dialog_ok)) { _, _ -> finish() }
-                            .setCancelable(false)
-                            .show()
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
-                    }
+        // Completion needs a photo of the finished work; the proof screen does the update.
+        completeJobLauncher.launch(
+            Intent(this, CompletionProofActivity::class.java).apply {
+                putExtra("requestId",    requestId)
+                putExtra("requestTitle", requestTitle)
             }
-            .setNegativeButton(getString(R.string.dialog_cancel), null)
-            .show()
+        )
     }
 
     // ── Customer: open tracking ────────────────────────────────────────────────
@@ -402,6 +428,106 @@ class ChatActivity : AppCompatActivity() {
                 .addOnFailureListener { launch(0.0, 0.0) }
         } else {
             launch(0.0, 0.0)
+        }
+    }
+
+    // ── Customer: share location with the vendor ──────────────────────────────
+
+    private fun onShareLocationClicked() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            confirmShareLocation()
+        } else {
+            shareLocationPermLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+    }
+
+    private fun confirmShareLocation() {
+        val vendorName = intent.getStringExtra("vendorName") ?: "Vendor"
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.dialog_share_location_title))
+            .setMessage(getString(R.string.dialog_share_location_msg, vendorName))
+            .setPositiveButton(getString(R.string.dialog_share_location_positive)) { _, _ -> shareCurrentLocation() }
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
+            .show()
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun shareCurrentLocation() {
+        val client = LocationServices.getFusedLocationProviderClient(this)
+        client.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, CancellationTokenSource().token)
+            .addOnSuccessListener { loc ->
+                if (loc != null) {
+                    saveSharedLocation(loc.latitude, loc.longitude)
+                } else {
+                    // Fall back to the last known fix
+                    client.lastLocation
+                        .addOnSuccessListener { last ->
+                            if (last != null) saveSharedLocation(last.latitude, last.longitude)
+                            else locationUnavailable()
+                        }
+                        .addOnFailureListener { locationUnavailable() }
+                }
+            }
+            .addOnFailureListener { locationUnavailable() }
+    }
+
+    private fun locationUnavailable() {
+        Toast.makeText(this, getString(R.string.toast_location_unavailable), Toast.LENGTH_LONG).show()
+    }
+
+    private fun saveSharedLocation(lat: Double, lon: Double) {
+        db.collection(Constants.COLLECTION_REQUESTS).document(requestId)
+            .update(
+                mapOf(
+                    "customerSharedLatitude"  to lat,
+                    "customerSharedLongitude" to lon,
+                    "customerLocationSharedAt" to FieldValue.serverTimestamp()
+                )
+            )
+            .addOnSuccessListener {
+                // Also drop a note in the chat so the vendor notices straight away
+                db.collection(Constants.COLLECTION_CHATS).document(requestId)
+                    .collection("messages")
+                    .add(
+                        hashMapOf(
+                            "senderId"   to uid,
+                            "senderName" to currentUserName.ifEmpty { "User" },
+                            "text"       to getString(R.string.msg_location_shared),
+                            "type"       to "location",
+                            "lat"        to lat,
+                            "lon"        to lon,
+                            "timestamp"  to FieldValue.serverTimestamp()
+                        )
+                    )
+                Toast.makeText(this, getString(R.string.toast_location_shared), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    // ── Vendor: open the customer's shared location ───────────────────────────
+
+    private fun openCustomerLocation() {
+        val lat = customerSharedLat ?: return
+        val lon = customerSharedLon ?: return
+        openLocation(lat, lon)
+    }
+
+    // Opens the point in whichever maps app the user picks (also used by the chat location cards)
+    private fun openLocation(lat: Double, lon: Double) {
+        val label = Uri.encode("Customer")
+        val geo = Intent(Intent.ACTION_VIEW, Uri.parse("geo:$lat,$lon?q=$lat,$lon($label)"))
+        try {
+            startActivity(geo)
+        } catch (e: Exception) {
+            try {
+                startActivity(Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lon")))
+            } catch (e2: Exception) {
+                Toast.makeText(this, getString(R.string.toast_no_maps_app), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -440,6 +566,22 @@ class ChatActivity : AppCompatActivity() {
 
         override fun getItemCount() = messages.size
 
+        // Location messages render as a tappable card instead of plain text
+        private fun bindBody(msg: Message, tvText: android.widget.TextView, card: View) {
+            val lat = msg.lat
+            val lon = msg.lon
+            if (msg.type == "location" && lat != null && lon != null) {
+                tvText.visibility = View.GONE
+                card.visibility   = View.VISIBLE
+                card.setOnClickListener { openLocation(lat, lon) }
+            } else {
+                tvText.visibility = View.VISIBLE
+                tvText.text       = msg.text
+                card.visibility   = View.GONE
+                card.setOnClickListener(null)
+            }
+        }
+
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val msg  = messages[position]
             val time = msg.timestamp?.toDate()?.let {
@@ -448,7 +590,7 @@ class ChatActivity : AppCompatActivity() {
 
             when (holder) {
                 is SentVH -> {
-                    holder.b.tvMessageText.text = msg.text
+                    bindBody(msg, holder.b.tvMessageText, holder.b.layoutLocationCard)
                     holder.b.tvTimestamp.text   = time
                     val picUrl = profilePicCache[uid] ?: ""
                     if (picUrl.isNotEmpty()) {
@@ -460,7 +602,7 @@ class ChatActivity : AppCompatActivity() {
                 }
                 is ReceivedVH -> {
                     holder.b.tvSenderName.text  = msg.senderName
-                    holder.b.tvMessageText.text = msg.text
+                    bindBody(msg, holder.b.tvMessageText, holder.b.layoutLocationCard)
                     holder.b.tvTimestamp.text   = time
                     val picUrl = profilePicCache[msg.senderId] ?: ""
                     if (picUrl.isNotEmpty()) {

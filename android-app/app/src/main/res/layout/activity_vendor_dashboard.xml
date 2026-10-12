@@ -206,6 +206,52 @@
         </LinearLayout>
     </FrameLayout>
 
+    <!-- ── Period filter (applies to both tabs) ───────────────────────── -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:overScrollMode="never"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="2dp"
+        android:clipToPadding="false">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupPeriod"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:chipSpacingHorizontal="8dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPeriodAll"
+                style="@style/Widget.Mistri.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_all"
+                android:checked="true" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPeriodToday"
+                style="@style/Widget.Mistri.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_today"
+                android:checked="false" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPeriodWeek"
+                style="@style/Widget.Mistri.Chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_week"
+                android:checked="false" />
+        </com.google.android.material.chip.ChipGroup>
+    </HorizontalScrollView>
+
     <!-- ── Content area ──────────────────────────────────────────────── -->
     <FrameLayout
         android:layout_width="match_parent"
@@ -399,6 +445,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
+            android:elevation="0dp"
+            app:elevation="0dp"
             app:menu="@menu/nav_vendor" />
     </FrameLayout>
 

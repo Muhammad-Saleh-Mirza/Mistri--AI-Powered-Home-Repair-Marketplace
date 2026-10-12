@@ -30,7 +30,7 @@
         app:cardElevation="1dp"
         app:cardBackgroundColor="@color/colorSurface"
         app:strokeColor="@color/divider"
-        app:strokeWidth="1dp"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -57,6 +57,65 @@
                 android:textSize="13sp"
                 android:textColor="@color/textPrimary"
                 android:lineSpacingMultiplier="1.45" />
+
+            <!-- Location card (shown instead of the text for location messages) -->
+            <LinearLayout
+                android:id="@+id/layoutLocationCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_location_card_received"
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/ivLocationPin"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="@drawable/bg_location_pin_received"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_location_pin"
+                    android:tint="@color/white"
+                    android:contentDescription="@null" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp">
+
+                    <TextView
+                        android:id="@+id/tvLocationTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/msg_location_card_title"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary" />
+
+                    <TextView
+                        android:id="@+id/tvLocationHint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/msg_location_card_hint"
+                        android:textSize="11sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="1dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/msg_location_card_action"
+                        android:textSize="11.5sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/colorPrimary"
+                        android:layout_marginTop="5dp" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/tvTimestamp"
